@@ -1,5 +1,5 @@
 # TradeUnlocker
-Unlocks trade in F2P OSRS. 
+Unlocks trade in F2P OSRS by killin mobs, sittin on ass, and starting another free script that does quests. Requires subscribing to tmp's 10 QP on SDN unless account already has 10 QP. This script starts Ernest The Chicken in order to not get stuck there after starting tmp's 10 QP (bug as of 7/8/2022). Equip  best scimitar and/or gear or else gets iron dagger. No food/str pots and may die at cows but just runs back (wont get death pile so dont bring money).
 
 
 # Instructions how to do it like a 3 yr old retarded child if on Windows (can't help Mac or Linux sry):
@@ -20,7 +20,7 @@ The click left mouse button over the "tradeunlocker.jar" AND DO NOT LET GO!!! If
 
 # Instructions how to do it if you aren't like a 3 yr old retarded child
 
-Build the script using an IDE like Eclipse after launching the dreambot updater "DBLauncher.jar" and adding external jar "client.jar" in DreamBot\BotData, then export to folder Dreambot\Scripts. Supports quickstart (no params). Requires subscribing to tmp's 10 QP on SDN unless account already has 10 QP, and this script starts Ernest The Chicken in order to not get stuck there after starting tmp's 10 QP (known bug as of 7/8/2022). A pre-built .jar file is included but is optional.
+Build the script using an IDE like Eclipse after launching the dreambot updater "DBLauncher.jar" and adding external jar "client.jar" in DreamBot\BotData, then export to folder Dreambot\Scripts. Supports quickstart (no params). A pre-built .jar file is included but is optional.
 
 
 
