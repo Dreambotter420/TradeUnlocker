@@ -23,7 +23,10 @@ The click left mouse button over the "tradeunlocker.jar" AND DO NOT LET GO!!! If
 Build the script using an IDE like Eclipse after launching the dreambot updater "DBLauncher.jar" and adding external jar "client.jar" in DreamBot\BotData, then export to folder Dreambot\Scripts. Supports quickstart (no params). Requires subscribing to tmp's 10 QP on SDN unless account already has 10 QP, and this script starts Ernest The Chicken in order to not get stuck there after starting tmp's 10 QP (known bug as of 7/8/2022).
 
 
+
 Credits to LostVirt for tree framework and the paint
+
 Credits to Smile / bap for combat framework
+
 Credits to tmp for tmp's 10 QP: https://dreambot.org/forums/index.php?/topic/22190-free-tmps-ten-qp-no-requirements/
 
