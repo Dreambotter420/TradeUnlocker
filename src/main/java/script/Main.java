@@ -32,6 +32,16 @@ public class Main extends AbstractScript implements PaintInfo, ChatListener
 {
     public static Timer timer;
     @Override
+    public void onStart(String[] args)
+    {
+    	MethodProvider.log("Trade unlocker starting!");
+    	timer = new Timer(2000000000);
+    	Keyboard.setWordsPerMinute(150);
+    	Sleep.dt = LocalDateTime.now();
+        API.runTimer = new Timer();
+        instantiateTree();
+    }
+    @Override
     public void onStart()
     {
     	MethodProvider.log("Trade unlocker starting!");
