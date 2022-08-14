@@ -26,7 +26,8 @@ Build the script using an IDE like Eclipse after launching the dreambot updater 
 
 Credits to LostVirt for tree framework and the paint
 
-Credits to Smile / bap for combat framework
+Credits to Smile / bap for combat code
 
 Credits to tmp for tmp's 10 QP: https://dreambot.org/forums/index.php?/topic/22190-free-tmps-ten-qp-no-requirements/
 
+Thanks for sharing :-)
