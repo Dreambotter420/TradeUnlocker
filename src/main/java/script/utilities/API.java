@@ -9,11 +9,20 @@ import org.dreambot.api.ClientSettings;
 import org.dreambot.api.data.ActionMode;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.MethodProvider;
+import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.container.impl.bank.Bank;
+import org.dreambot.api.methods.container.impl.bank.BankType;
+import org.dreambot.api.methods.dialogues.Dialogues;
+import org.dreambot.api.methods.filter.Filter;
+import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.settings.PlayerSettings;
+import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.methods.world.World;
 import org.dreambot.api.methods.world.Worlds;
 import org.dreambot.api.utilities.Timer;
+import org.dreambot.api.wrappers.interactive.Entity;
+import org.dreambot.api.wrappers.items.Item;
 
 
 
@@ -22,7 +31,7 @@ public class API {
 	public static String currentBranch = "";
     public static String currentLeaf = "";
     public static enum modes {
-		IDLE,TRAIN_COMBAT,QUEST
+		IDLE,TRAIN_COMBAT,QUEST,FISH,CHOP,MINE
     }
 public static boolean unlockedTrade = false;
 public static int gameTimeHours;
@@ -43,6 +52,112 @@ public static boolean tradeUnlocked = false;
 	public static Timer runTimer;
 	
 
+	public static boolean walkOpenBank()
+    {
+    	if(Bank.isOpen()) return true;
+    	Entity bank = Bank.getClosestBank(BankType.BOOTH);
+    	if(bank != null)
+    	{
+    		if(bank.distance() <= 8)
+        	{
+        		if(bank.isOnScreen())
+        		{
+        			if(bank.interact("Bank"))
+        			{
+        				MethodProvider.sleepUntil(() -> Bank.isOpen() || Dialogues.inDialogue(), () -> Players.localPlayer().isMoving(), Sleep.calculate(2222, 2222), 69);
+        			}
+        			Sleep.sleep(69, 420);
+        			return false;
+        		}
+        	}
+    	}
+    	if(Walking.shouldWalk(6) && !Bank.open(Bank.getClosestBankLocation())) Sleep.sleep(420, 696);
+    	return false;
+    }
+public static boolean onlyHaveItems(int... itemIDs)
+{
+	List<Integer> itemID2s = new ArrayList<Integer>();
+	for(int i : itemIDs)
+	{
+		itemID2s.add(i);
+	}
+	return onlyHaveItems(itemID2s);
+}
+public static boolean onlyHaveItems(List<Integer> itemIDs) {
+	if(itemIDs == null || itemIDs.isEmpty())
+	{
+		return Inventory.isEmpty();
+	}
+	Filter<Item> filter = i -> i != null && itemIDs.contains(i.getID());
+	List<Item> invyExceptCoins = Inventory.except(filter);
+	boolean haveException = false;
+	for(Item i : invyExceptCoins)
+	{
+		if(i == null) 
+		{
+			continue;
+		}
+		if(i.getName() == null || i.getName().toLowerCase().equals("null"))
+		{
+			MethodProvider.log("Name Null!");
+			continue;
+		}
+		haveException = true;
+	}
+	return !haveException;
+}
+public static boolean onlyHaveItemNames(String... itemNames)
+{
+	List<String> itemID2s = new ArrayList<String>();
+	for(String i : itemNames)
+	{
+		itemID2s.add(i);
+	}
+	return onlyHaveItemNames(itemID2s);
+}
+public static boolean onlyHaveItemNames(List<String> itemNames) {
+	if(itemNames == null || itemNames.isEmpty())
+	{
+		return Inventory.isEmpty();
+	}
+	Filter<Item> filter = i -> i != null && itemNames.contains(i.getName());
+	List<Item> invyExceptCoins = Inventory.except(filter);
+	boolean haveException = false;
+	for(Item i : invyExceptCoins)
+	{
+		if(i == null) 
+		{
+			continue;
+		}
+		if(i.getName() == null || i.getName().toLowerCase().equals("null"))
+		{
+			MethodProvider.log("Name Null!");
+			continue;
+		}
+		haveException = true;
+	}
+	return !haveException;
+}
+public static boolean checkedBank()
+{
+	//return true;
+	if(Bank.getLastBankHistoryCacheTime() <= 0)
+	{
+		if(Bank.isOpen()) 
+		{
+			Bank.contains(995);
+		}
+		else
+		{
+			if(!Bank.open(Bank.getClosestBankLocation())) Sleep.sleep(666,666);
+		}
+	}
+	if(Bank.getLastBankHistoryCacheTime() > 0)
+	{
+		return true;
+	}
+	return false;
+}
 public static void randomizeSkillSetpoints() {
 	//combat midpoints 5-15
 	attMidpoint = (int) Calculations.nextGaussianRandom(15,5);
@@ -212,8 +327,15 @@ public static void randomizeSkillSetpoints() {
 		List<World> verifiedWorlds = new ArrayList<World>();
 		for(World tmp : Worlds.noMinimumLevel())
 		{
-			if(	!tmp.isMembers()
+			if(!tmp.isMembers()
+					&& tmp.isF2P()
 					&& !tmp.isPVP()
+					&& !tmp.isHighRisk() 
+					&& !tmp.isLastManStanding()
+					&& !tmp.isPvpArena() 
+					&& !tmp.isSuspicious()
+					&& !tmp.isLeagueWorld()
+					&& !tmp.isTargetWorld()
 					&& !tmp.isTournamentWorld()
 					&& !tmp.isDeadmanMode()
 					&& tmp.getWorld() != 301) //just avoid popular world)

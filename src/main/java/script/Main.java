@@ -6,17 +6,18 @@ import java.awt.RenderingHints;
 import java.time.LocalDateTime;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.input.Keyboard;
-import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.script.*;
 import org.dreambot.api.script.listener.ChatListener;
 import org.dreambot.api.utilities.Timer;
 import script.behaviour.*;
-import script.behaviour.initialization.*;
-import script.behaviour.tradeunlock.Idle;
-import script.behaviour.tradeunlock.combattraining.*;
-import script.behaviour.tradeunlock.questing.Questing;
 import script.framework.Tree;
 import script.paint.*;
+import script.unlock.idle.Idle;
+import script.unlock.quests.Questing;
+import script.unlock.skills.melee.*;
+import script.unlock.skills.skills.Chop_n_Burn;
+import script.unlock.skills.skills.Fish_n_Cook;
+import script.unlock.skills.skills.Mine_n_Smelt_n_Smith;
 import script.utilities.API;
 import script.utilities.Sleep;
 
@@ -59,10 +60,14 @@ public class Main extends AbstractScript implements PaintInfo, ChatListener
         		new WaitForLogged_N_Loaded(),
     			new Initialize(),
     			new ContinueDialogue(),
+    			new DecisionLeaf(),
+    			new Chop_n_Burn(),
+    			new Fish_n_Cook(),
+    			new Mine_n_Smelt_n_Smith(),
     			new Idle(),
     			new TrainMelee().addLeafs(
     				new DropItemsBuryBones(),
-    				new GetIronDagger(),
+    				new GetBestWeapon(),
     				new HandleAttackStyles(),
     				new DetectPlayer(),
     				new AttackChickens(),
@@ -72,13 +77,11 @@ public class Main extends AbstractScript implements PaintInfo, ChatListener
     @Override
     public int onLoop()
     {
-        if(API.unlockMode == null)
-		{
-    		API.unlockMode = API.modes.TRAIN_COMBAT;
-    		MethodProvider.log("Setting trade unlock mode to "+API.unlockMode);
-		}
         return tree.onLoop();
     }
+    public static String customPaintText1 = "";
+    public static String customPaintText2 = "";
+    public static String customPaintText3 = "";
     // Our paint info
     // Add new lines to the paint here
     @Override
@@ -88,6 +91,10 @@ public class Main extends AbstractScript implements PaintInfo, ChatListener
     			getManifest().name() +" "+ getManifest().version() + " by Dreambotter420 ^_^",
                 "Current Branch: " + API.currentBranch,
                 "Current Leaf: " + API.currentLeaf,
+                "Time until next task switch: " + (DecisionLeaf.taskTimer != null ? Timer.formatTime(DecisionLeaf.taskTimer.remaining()) : "N/A"),
+                customPaintText1,
+                customPaintText2,
+                customPaintText3
         };
     }
 

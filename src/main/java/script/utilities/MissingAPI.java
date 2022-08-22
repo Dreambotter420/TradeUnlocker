@@ -11,7 +11,10 @@ import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.combat.Combat;
 import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.container.impl.Shop;
+import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.dialogues.Dialogues;
+import org.dreambot.api.methods.grandexchange.GrandExchange;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.skills.Skill;
@@ -27,6 +30,7 @@ import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.Item;
 import org.dreambot.api.wrappers.widgets.WidgetChild;
+
 
 public class MissingAPI {
 	
@@ -55,17 +59,37 @@ public class MissingAPI {
 		//at this point all items in inventory either equal -1 or matched item list
 		return false;	
 	}
-	public static void scrollHopWorld(int world)
+	public static boolean scrollHopWorld(int world)
 	{
-		if(Players.localPlayer().isInCombat() ||
-				Worlds.getCurrentWorld() == world) return;
+		if(Players.localPlayer().isInCombat()) return false;
+		if(Worlds.getCurrentWorld() == world) 
+		{
+			MethodProvider.log("Hopped to world " + world+ " already!");
+			return true;
+		}
 		Timer timeout = new Timer(Sleep.calculate(18000, 5555));
 		while(Worlds.getCurrentWorld() != world && 
 				!timeout.finished() && 
 				Client.isLoggedIn() && 
 				!Players.localPlayer().isInCombat() && 
 				Skills.getRealLevel(Skill.HITPOINTS) > 0)
-		{
+		{	
+			Sleep.sleep(69, 69);
+			if(Dialogues.isProcessing())
+			{
+				MethodProvider.sleepUntil(() -> !Dialogues.isProcessing(), Sleep.calculate(2222, 2222));
+				continue;
+			}
+			if(Dialogues.canContinue())
+			{
+				Dialogues.continueDialogue();
+				MethodProvider.sleep(Sleep.calculate(420, 696));
+				continue;
+			}
+			if(Bank.isOpen()) Bank.close();
+			if(GrandExchange.isOpen()) GrandExchange.close();
+			if(Shop.isOpen()) Shop.close();
+			if(Shop.isOpen() || GrandExchange.isOpen() || Bank.isOpen()) continue;
 			if(Widgets.getWidgetChild(69,2) != null &&
 					Widgets.getWidgetChild(69,2).isVisible() &&
 					Widgets.getWidgetChild(69,2).getText().contains("Loading..."))
@@ -145,6 +169,12 @@ public class MissingAPI {
 			}
 			Sleep.sleep(111, 1111);
 		}
+		if(Worlds.getCurrentWorld() == world) 
+		{
+			MethodProvider.log("Hopped to world " + world+ "!");
+			return true;
+		}
+		return false;
 	}
 	public static void hopWorld(int world)
 	{
