@@ -2,13 +2,11 @@ package script.unlock.skills.melee;
 
 import java.util.List;
 
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.bank.BankMode;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.container.impl.equipment.EquipmentSlot;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.skills.Skill;
@@ -16,12 +14,15 @@ import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.items.GroundItem;
 import script.framework.Leaf;
 import script.utilities.API;
 import script.utilities.MissingAPI;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
+import script.p;
 public class GetBestWeapon extends Leaf {
 
     @Override
@@ -51,8 +52,8 @@ public class GetBestWeapon extends Leaf {
 		if(Inventory.contains(bestWeapon))
 		{
 			if(!Tabs.isOpen(Tab.INVENTORY)) Tabs.open(Tab.INVENTORY);
-			if(Inventory.interact(bestWeapon, "Wield")) MethodProvider.sleepUntil(() -> Equipment.contains(bestWeapon), Sleep.calculate(2222,2222));
-	        return Sleep.calculate(111,111);
+			if(Inventory.interact(bestWeapon, "Wield")) Sleep.sleepUntil(() -> Equipment.contains(bestWeapon), Sleepz.calculate(2222,2222));
+	        return Sleepz.calculate(111,111);
 		}
 		if(Bank.contains(bestWeapon))
 		{
@@ -61,35 +62,35 @@ public class GetBestWeapon extends Leaf {
 				if(Bank.getWithdrawMode() != BankMode.ITEM)
 				{
 					Bank.setWithdrawMode(BankMode.ITEM);
-					return Sleep.calculate(420, 696);
+					return Sleepz.calculate(420, 696);
 				}
 				if(Bank.withdraw(bestWeapon,1))
 				{
-					MethodProvider.sleepUntil(() -> Inventory.contains(bestWeapon), Sleep.calculate(2222, 2222));
+					Sleep.sleepUntil(() -> Inventory.contains(bestWeapon), Sleepz.calculate(2222, 2222));
 				}
 			}
-			return Sleep.calculate(420,1111);
+			return Sleepz.calculate(420,1111);
 		}
 		if(ironDaggerTile.distance() > 8 || 
 				!ironDaggerTile.canReach()) 
 		{
-			if(Walking.shouldWalk() && Walking.walk(ironDaggerTile)) Sleep.sleep(420, 696);
-			return Sleep.calculate(111, 111);
+			if(Walking.shouldWalk() && Walking.walk(ironDaggerTile)) Sleepz.sleep(420, 696);
+			return Sleepz.calculate(111, 111);
 		}
-		if(Players.localPlayer().isMoving()) return Sleep.calculate(666,1111);
+		if(p.l.isMoving()) return Sleepz.calculate(666,1111);
 		List<GroundItem> items = GroundItems.getForTile(ironDaggerTile);
 		for(GroundItem g : items)
 		{
 			if(g != null && g.getID() == ironDaggerID) 
 			{
 				g.interact("Take");
-				return Sleep.calculate(666,1111);
+				return Sleepz.calculate(666,1111);
 			}
 		}
 		final int world = API.getF2PWorld();
-		MethodProvider.log("Hopping to world " +world+" after being in iron dagger spot but its missing!");
+		Logger.log("Hopping to world " +world+" after being in iron dagger spot but its missing!");
 		MissingAPI.hopWorld(world);
-        return Sleep.calculate(50,555);
+        return Sleepz.calculate(50,555);
     }
 
 }

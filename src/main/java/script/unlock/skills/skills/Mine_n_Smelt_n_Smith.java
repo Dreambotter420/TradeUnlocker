@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.bank.BankMode;
-import org.dreambot.api.methods.container.impl.bank.BankType;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.filter.Filter;
@@ -34,13 +32,13 @@ import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.methods.widget.helpers.ItemProcessing;
 import org.dreambot.api.methods.widget.helpers.Smithing;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
-import org.dreambot.api.wrappers.interactive.Entity;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.GroundItem;
-import org.dreambot.api.wrappers.items.Item;
 import org.dreambot.api.wrappers.map.impl.CollisionMap;
 
 import script.Main;
@@ -48,8 +46,9 @@ import script.behaviour.DecisionLeaf;
 import script.framework.Leaf;
 import script.utilities.API;
 import script.utilities.MissingAPI;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
+import script.p;
 public class Mine_n_Smelt_n_Smith extends Leaf {
 
     @Override
@@ -130,7 +129,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     	{
     		if(Inventory.contains(hammer) || Inventory.isEmpty())
     		{
-    			MethodProvider.log("Finished mining task!");
+    			Logger.log("Finished mining task!");
     			API.unlockMode = null;
     			return 10;
     		}
@@ -140,12 +139,12 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     			Widgets.getWidgetChild(153,16).isVisible())
     	{
     		Main.customPaintText3 = "";
-    		if(Widgets.getWidgetChild(153,16).interact("Close")) Sleep.sleep(111, 1111);
-    		return Sleep.calculate(111, 111);
+    		if(Widgets.getWidgetChild(153,16).interact("Close")) Sleepz.sleep(111, 1111);
+    		return Sleepz.calculate(111, 111);
     	}
-    	if(canHandleDialogues())
+    	if(API.canHandleDialogues())
 		{
-			return Sleep.calculate(69, 420);
+			return Sleepz.calculate(69, 420);
 		}
     	//step 0-1: announce MMM TASTY
     	if(!announcedTasty)
@@ -154,7 +153,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     		initialize();
     		announcedTasty = true;
     	}
-    	if(!API.checkedBank()) return Sleep.calculate(111, 1111);
+    	if(!API.checkedBank()) return Sleepz.calculate(111, 1111);
     	if(getBestPickaxe() && getHammer())
     	{
     		//here we need to do doric's quest to use his anvils
@@ -162,7 +161,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     		{
     			Main.customPaintText2 = "~~ Doing dorics quest for his anvils ~~";
     			doDoricsQuest();
-    			return Sleep.calculate(111, 111);
+    			return Sleepz.calculate(111, 111);
     		}
     		Main.customPaintText2 = "~~ Finished Doric\'s Quest! ~~";
     		//here we have invy full to start smelting into bars
@@ -171,7 +170,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     				"Rune pickaxe","Adamant pickaxe","Mithril pickaxe","Steel pickaxe"))
     		{
     			smeltBars();
-    			return Sleep.calculate(111,1111);
+    			return Sleepz.calculate(111,1111);
     		}
     		if(Inventory.onlyContains("Copper ore","Tin ore","Iron ore","Hammer",
     				"Clue geode (beginner)","Uncut sapphire","Uncut emerald","Uncut ruby","Uncut diamond",
@@ -182,29 +181,29 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     					faladorForge.getCenter().distance() < 25)
     			{
     				smeltBars();
-        			return Sleep.calculate(111,1111);
+        			return Sleepz.calculate(111,1111);
     			}
     			mineOre(null);
-    			return Sleep.calculate(111,1111);
+    			return Sleepz.calculate(111,1111);
         	}
     		//continue to smelt once where we have bars in our invy already from smithing and have forgable materials
         	if(Inventory.contains(bronzeBar,ironBar) && 
         			(Inventory.containsAll(copperOre,tinOre) || Inventory.contains(ironOre)))
         	{
         		smeltBars();
-        		return Sleep.calculate(111, 1111);
+        		return Sleepz.calculate(111, 1111);
         	}
         	if(Inventory.contains(bronzeBar,ironBar) && 
         			!Inventory.containsAll(copperOre,tinOre) &&
         			!Inventory.contains(ironOre))
         	{
         		smithBars();
-        		return Sleep.calculate(111, 1111);
+        		return Sleepz.calculate(111, 1111);
         	}
         	if(!Inventory.contains(ironBar,bronzeBar,ironOre) && 
         			(Inventory.count(copperOre) <= 0 || Inventory.count(tinOre) <= 0)) handleBanking();
     	}
-		return Sleep.calculate(111,111);
+		return Sleepz.calculate(111,111);
     }
     public static void smithBars()
     {
@@ -298,21 +297,21 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
 			else if(smithing >= 15) smithItem = SmithItem.DAGGER;
 			else 
 			{
-				MethodProvider.log("Something wrong - have iron bars in invy but not lvl 15 smithing! depositing invy...");
+				Logger.log("Something wrong - have iron bars in invy but not lvl 15 smithing! depositing invy...");
 				handleBanking();
 				return;
 			}
 		}
 		else
 		{
-			MethodProvider.log("Seriously wrong script logic! Not have any iron/bronze bars but we thought we had some before this function");
+			Logger.log("Seriously wrong script logic! Not have any iron/bronze bars but we thought we had some before this function");
 			return;
 		}
-    	if(doricsAnvils.contains(Players.localPlayer()))
+    	if(doricsAnvils.contains(p.l))
     	{
-    		if(Players.localPlayer().isAnimating())
+    		if(p.l.isAnimating())
     		{
-    			Sleep.sleep(111, 1111);
+    			Sleepz.sleep(111, 1111);
     			return;
     		}
     		if(Smithing.isOpen())
@@ -328,18 +327,18 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     			if(isAutoSmithingItem(smithItem,metal))
     			{
     				Keyboard.type(" ");
-    				MethodProvider.sleepUntil(() -> Dialogues.inDialogue() || 
+    				Sleep.sleepUntil(() -> Dialogues.inDialogue() || 
     						Inventory.count(smithID) < finalBarsRequired,
-    						() -> Players.localPlayer().isAnimating(), Sleep.calculate(2222, 2222),69);
+    						() -> p.l.isAnimating(), Sleepz.calculate(2222, 2222),69);
     				return;
     			}
     			if(Smithing.makeAll(smithID))
     			{
-    				MethodProvider.sleepUntil(() -> Dialogues.inDialogue() || 
+    				Sleep.sleepUntil(() -> Dialogues.inDialogue() || 
     						Inventory.count(smithID) < finalBarsRequired,
-    						() -> Players.localPlayer().isAnimating(), Sleep.calculate(2222, 2222),69);
+    						() -> p.l.isAnimating(), Sleepz.calculate(2222, 2222),69);
     			}
-    			Sleep.sleep(111, 111);
+    			Sleepz.sleep(111, 111);
     			return;
     		}
     		GameObject anvil = GameObjects.closest(g -> g!=null && g.getName().equals("Anvil") && doricsAnvils.contains(g));
@@ -351,21 +350,21 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
         			{
     					if(isAutoSmithingItem(smithItem,metal))
     					{
-    						final int timeout = Sleep.calculate(3333, 3333);
-    						Keyboard.holdSpace(() -> Players.localPlayer().isAnimating(), timeout);
-    						MethodProvider.sleepUntil(() -> Players.localPlayer().isAnimating(), timeout);
+    						final int timeout = Sleepz.calculate(3333, 3333);
+    						Keyboard.holdSpace(() -> p.l.isAnimating(), timeout);
+    						Sleep.sleepUntil(() -> p.l.isAnimating(), timeout);
     						return;
     					}
-        				MethodProvider.sleepUntil(() -> Smithing.isOpen(),
-        						() -> Players.localPlayer().isMoving(), Sleep.calculate(2222, 2222),69);
+        				Sleep.sleepUntil(() -> Smithing.isOpen(),
+        						() -> p.l.isMoving(), Sleepz.calculate(2222, 2222),69);
         			}
-    				Sleep.sleep(111, 111);
+    				Sleepz.sleep(111, 111);
     				return;
     			}
     		}
     	}
-    	if(Walking.shouldWalk(6) && Walking.walk(doricsAnvils.getCenter())) Sleep.sleep(420, 696);
-		Sleep.sleep(111, 111);
+    	if(Walking.shouldWalk(6) && Walking.walk(doricsAnvils.getCenter())) Sleepz.sleep(420, 696);
+		Sleepz.sleep(111, 111);
 		return;
     }
     public static int getSmithItemID(SmithItem smithItem,Metal metal)
@@ -515,17 +514,17 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     				{
     					if(doric.interact("Talk-to"))
         				{
-        					MethodProvider.sleepUntil(() -> Dialogues.inDialogue(), () -> Players.localPlayer().isMoving(), Sleep.calculate(2222,2222),69);
+        					Sleep.sleepUntil(() -> Dialogues.inDialogue(), () -> p.l.isMoving(), Sleepz.calculate(2222,2222),69);
         				}
-        				Sleep.sleep(111, 111);
+        				Sleepz.sleep(111, 111);
         				return;
     				}
-    				if(Walking.shouldWalk() && Walking.walk(doric)) Sleep.sleep(420, 696);
+    				if(Walking.shouldWalk() && Walking.walk(doric)) Sleepz.sleep(420, 696);
     				return;
     			}
     			
     		}
-    		if(Walking.shouldWalk() && Walking.walk(doricsAnvils.getCenter())) Sleep.sleep(420, 696);
+    		if(Walking.shouldWalk() && Walking.walk(doricsAnvils.getCenter())) Sleepz.sleep(420, 696);
     		return;
     	}
     	if(Skills.getRealLevel(Skill.MINING) < 15)
@@ -541,7 +540,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     		{
     			if(Inventory.dropAll(i -> i!=null && (i.getID() == copperOre || i.getID() == tinOre || i.getID() == clay || i.getID() == clueGeodeBeginner)))
     			{
-    				MethodProvider.sleepUntil(() -> Inventory.contains(copperOre,tinOre,clay,clueGeodeBeginner), Sleep.calculate(2222, 2222));
+    				Sleep.sleepUntil(() -> Inventory.contains(copperOre,tinOre,clay,clueGeodeBeginner), Sleepz.calculate(2222, 2222));
     			}
     			dropQty = 0;
     			return;
@@ -564,30 +563,30 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     public static int dropQty = 0;
     public static void mineOre(Filter<GameObject> rockFilter)
     {
-    	if(!rimmingtonMine.contains(Players.localPlayer()))
+    	if(!rimmingtonMine.contains(p.l))
     	{
     		Main.customPaintText1 = "~~ Walking to Rimmington ~~";
     		if(randTile == null) randTile = rimmingtonMine.getRandomTile();
-    		if(Walking.shouldWalk(6) && Walking.walk(randTile)) Sleep.sleep(420,696);
+    		if(Walking.shouldWalk(6) && Walking.walk(randTile)) Sleepz.sleep(420,696);
     		return;
     	}
     	if(randTile != null) randTile = null;
     	int playersCount = 0;
-    	for(Player p : Players.all(p -> p!=null && !p.equals(Players.localPlayer()) && p.distance() < 4))
+    	for(Player p2 : Players.all(p1 -> p1!=null && !p1.equals(p.l) && p1.distance() < 4))
     	{
-    		if(bestIrons.contains(Players.localPlayer())) playersCount++;
+    		if(bestIrons.contains(p.l)) playersCount++;
     		playersCount++;
     	}
     	if(playersCount >= 3)
     	{
     		final int world = API.getF2PWorld();
-    		Main.customPaintText1 = "Hopping to w"+world+" after seeing "+(bestIrons.contains(Players.localPlayer()) ? (int)(playersCount / 2):playersCount)+" other players closeby!";
-    		MethodProvider.log("Hopping to w"+world+" after seeing "+(bestIrons.contains(Players.localPlayer()) ? (int)(playersCount / 2):playersCount)+" other players closeby!");
+    		Main.customPaintText1 = "Hopping to w"+world+" after seeing "+(bestIrons.contains(p.l) ? (int)(playersCount / 2):playersCount)+" other players closeby!";
+    		Logger.log("Hopping to w"+world+" after seeing "+(bestIrons.contains(p.l) ? (int)(playersCount / 2):playersCount)+" other players closeby!");
     		MissingAPI.scrollHopWorld(world);
     		return;
     	}
     	Main.customPaintText1 = "~~ Mining ores ~~";
-    	MethodProvider.log("Beginning selection / find / sort of ores");
+    	Logger.log("Beginning selection / find / sort of ores");
     	if(rockFilter == null) 
     	{
     	    rockFilter = g -> g!=null && g.hasAction("Mine") &&
@@ -602,7 +601,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     	if(validRocks == null || validRocks.isEmpty()) return;
     	//time to go through all ores, find closest (walking dist) stand tile for each one, sort the list, and go mine the nearest rock
     	LinkedHashMap<GameObject,ObjectTile> rocksNTiles = new LinkedHashMap<GameObject,ObjectTile>();
-    	final Tile loc = Players.localPlayer().getTile();
+    	final Tile loc = p.l.getTile();
     	for(GameObject rock : validRocks)
     	{
     		if(rock == null || !rock.exists()) continue;
@@ -633,19 +632,19 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
                 });
     	GameObject closestRock = rocksNTilesListOfMapEntries.get(0).getKey();
     	Tile closestRockTile = rocksNTilesListOfMapEntries.get(0).getValue().getTile();
-    	final int changeX = closestRock.getX() - Players.localPlayer().getX();
-    	final int changeY = closestRock.getY() - Players.localPlayer().getY();
+    	final int changeX = closestRock.getX() - p.l.getX();
+    	final int changeY = closestRock.getY() - p.l.getY();
     	
-    	MethodProvider.log("Done sorting in "+test.elapsed()+"ms! Closest rock relative x/y: ("+changeX+", "+changeY+")");
+    	Logger.log("Done sorting in "+test.elapsed()+"ms! Closest rock relative x/y: ("+changeX+", "+changeY+")");
     	if(closestRock.isOnScreen())
     	{
     		if(closestRock.interact("Mine"))
     		{
     			String name = closestRock.getName();
     			Main.customPaintText1 = "Mine -> "+name;
-    			MethodProvider.sleepUntil(() -> Dialogues.inDialogue() || closestRock == null || !closestRock.exists(), 
-    					() -> Players.localPlayer().isAnimating() || Players.localPlayer().isMoving(),
-    					Sleep.calculate(2222,2222),69);
+    			Sleep.sleepUntil(() -> Dialogues.inDialogue() || closestRock == null || !closestRock.exists(), 
+    					() -> p.l.isAnimating() || p.l.isMoving(),
+    					Sleepz.calculate(2222,2222),69);
     			Main.customPaintText1 = "Mine -> "+name+" SleepUntil expired";
     		}
     		return;
@@ -654,7 +653,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     	//instead of walking to closest object, walk to closest walking distance tile around the closest object
     	if(Walking.shouldWalk() && Walking.walk(closestRockTile))
     	{
-    		MethodProvider.sleepUntil(() -> closestRock.isOnScreen(), Sleep.calculate(696,1111));
+    		Sleep.sleepUntil(() -> closestRock.isOnScreen(), Sleepz.calculate(696,1111));
     	}
     }
     private final static Area hammerArea = new Area(
@@ -674,22 +673,22 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     			if(Bank.getWithdrawMode() != BankMode.ITEM)
 				{
 					Bank.setWithdrawMode(BankMode.ITEM);
-					Sleep.sleep(111,222);
+					Sleepz.sleep(111,222);
 					return false;
 				}
 				if(Bank.withdraw(hammer,1))
 				{
-					MethodProvider.log("Withdrawing hammer");
-					MethodProvider.sleepUntil(() -> Inventory.contains(hammer), Sleep.calculate(2222,2222));
+					Logger.log("Withdrawing hammer");
+					Sleep.sleepUntil(() -> Inventory.contains(hammer), Sleepz.calculate(2222,2222));
 				}
     		}
-    		Sleep.sleep(111, 1111);
+    		Sleepz.sleep(111, 1111);
     		return false;
     	}
     	//no hammer in bank
     	Main.customPaintText1 = "~~ Getting hammer in bumfuck nowhere, pls wait ~~";
     	
-    	if(hammerArea.contains(Players.localPlayer()))
+    	if(hammerArea.contains(p.l))
     	{
     		GroundItem pickaxeGround = GroundItems.closest(g -> g!=null && 
     				g.getName().equals("Hammer") && 
@@ -699,26 +698,26 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     		{
     			if(pickaxeGround.interact("Take"))
     			{
-    				MethodProvider.sleepUntil(() -> Inventory.contains(hammer), 
-    						() -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+    				Sleep.sleepUntil(() -> Inventory.contains(hammer), 
+    						() -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
     			}
-    			Sleep.sleep(111, 1111);
+    			Sleepz.sleep(111, 1111);
     			return false;
     		}
     	}
-    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(hammerArea.getCenter()))) Sleep.sleep(111,1111);
-		Sleep.sleep(111,111);
+    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(hammerArea.getCenter()))) Sleepz.sleep(111,1111);
+		Sleepz.sleep(111,111);
 		return false;
     }
     
     public static void smeltBars()
     {
     	Main.customPaintText1 = "~~ Walking to Rimmington ~~";
-    	if(faladorForge.contains(Players.localPlayer()))
+    	if(faladorForge.contains(p.l))
 		{
     		if(!Inventory.contains(copperOre,tinOre,ironOre))
     		{
-    			MethodProvider.log("Holy smokes! Mined invy of jewels, depositing...");
+    			Logger.log("Holy smokes! Mined invy of jewels, depositing...");
     			if(Bank.open(Bank.getClosestBankLocation()))
     			{
     				if(Bank.depositAllExcept("Rune pickaxe","Adamant pickaxe","Mithril pickaxe","Steel pickaxe"))
@@ -726,7 +725,7 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     					Bank.close();
     				}
     			}
-    			Sleep.calculate(410, 1111);
+    			Sleepz.calculate(410, 1111);
     			return;
     		}
 			
@@ -736,22 +735,22 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
 				{
 					if(ItemProcessing.makeAll("Bronze bar"))
 					{
-						MethodProvider.sleepUntil(() -> !Inventory.contains("Tin ore") || !Inventory.contains("Copper ore"),
-								() -> Players.localPlayer().isAnimating(),
-								Sleep.calculate(2222,2222),69);
+						Sleep.sleepUntil(() -> !Inventory.contains("Tin ore") || !Inventory.contains("Copper ore"),
+								() -> p.l.isAnimating(),
+								Sleepz.calculate(2222,2222),69);
 					}
-					Sleep.sleep(420,1111);
+					Sleepz.sleep(420,1111);
 					return;
 				}
 				if(Inventory.contains("Iron ore"))
 				{
 					if(ItemProcessing.makeAll("Iron bar"))
 					{
-						MethodProvider.sleepUntil(() -> !Inventory.contains("Iron ore"),
-								() -> Players.localPlayer().isAnimating(),
-								Sleep.calculate(2222,2222),69);
+						Sleep.sleepUntil(() -> !Inventory.contains("Iron ore"),
+								() -> p.l.isAnimating(),
+								Sleepz.calculate(2222,2222),69);
 					}
-					Sleep.sleep(420,1111);
+					Sleepz.sleep(420,1111);
 					return;
 				}
 			}
@@ -761,13 +760,13 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
 			{
 				if(forge.interact("Smelt"))
 				{
-					MethodProvider.sleepUntil(() -> ItemProcessing.isOpen(), () -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+					Sleep.sleepUntil(() -> ItemProcessing.isOpen(), () -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
 				}
 			}
-			Sleep.sleep(420,1111);
+			Sleepz.sleep(420,1111);
 			return;
 		}
-    	if(Walking.shouldWalk(6) && Walking.walk(faladorForge.getCenter())) Sleep.sleep(420, 1111);
+    	if(Walking.shouldWalk(6) && Walking.walk(faladorForge.getCenter())) Sleepz.sleep(420, 1111);
 		return;
     }
     private final static Area takePickaxeArea = new Area(
@@ -808,28 +807,28 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     		if(bestPick.contains("Steel pickaxe") && att < 5) cannotEquip = true;
     		if(cannotEquip) 
     		{
-    			MethodProvider.log("Have best pick in invy but cannot equip it at att lvl! "+bestPick+" - lvl "+att);
+    			Logger.log("Have best pick in invy but cannot equip it at att lvl! "+bestPick+" - lvl "+att);
     			return true;
     		}
-    		MethodProvider.log("Equipping pickaxe: " + bestPick+" with att lvl: " + att);
+    		Logger.log("Equipping pickaxe: " + bestPick+" with att lvl: " + att);
     		Main.customPaintText1 = "Equipping pickaxe: " + bestPick+" with att lvl: " + att;
     		if(!Bank.isOpen() && !Tabs.isOpen(Tab.INVENTORY))
     		{
     			Tabs.open(Tab.INVENTORY);
-    			Sleep.sleep(111, 111);
+    			Sleepz.sleep(111, 111);
     			return false;
     		}
-    		if(Inventory.interact(bestPick,"Wield")) MethodProvider.sleepUntil(() -> Equipment.contains(bestPick), Sleep.calculate(2222, 2222));
-    		Sleep.sleep(69, 696);
+    		if(Inventory.interact(bestPick,"Wield")) Sleep.sleepUntil(() -> Equipment.contains(bestPick), Sleepz.calculate(2222, 2222));
+    		Sleepz.sleep(69, 696);
     		return false;
     	}
     	if(Equipment.contains(bestPick) || Inventory.contains(bestPick))
     	{
     		if(!haveOtherPickaxesInvyEquip(bestPick)) return true;
-    		MethodProvider.log("Depositing other picks to bank");
+    		Logger.log("Depositing other picks to bank");
     		Main.customPaintText1 = "~~ Depositing other picks to bank ~~";
     	} else {
-    		MethodProvider.log("Withdrawing best pick: "+ bestPick+" from bank ~~");
+    		Logger.log("Withdrawing best pick: "+ bestPick+" from bank ~~");
     		Main.customPaintText1 = "~~ Withdrawing best pick: " +bestPick+ " from bank ~~";
     	}
     	//best pick must be in bank here, or have other picks to deposit
@@ -846,8 +845,8 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     				if(Bank.depositAll(i -> i!=null && 
     	    				otherPicks.contains(i.getName())))
     	    		{
-    					MethodProvider.sleepUntil(() -> !Inventory.contains(otherPick),Sleep.calculate(2222, 2222));
-    					Sleep.sleep(111,1111);
+    					Sleep.sleepUntil(() -> !Inventory.contains(otherPick),Sleepz.calculate(2222, 2222));
+    					Sleepz.sleep(111,1111);
     					return false;
     	    		}
     			}
@@ -856,24 +855,24 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
 			if((Inventory.count(bestPick) + Equipment.count(bestPick)) > 1)
 			{
 				Main.customPaintText1 = "~~ Depositing extra of "+bestPick+" ~~";
-				MethodProvider.log("~~ Depositing extra of "+bestPick+" ~~");
+				Logger.log("~~ Depositing extra of "+bestPick+" ~~");
 				if(Bank.deposit(bestPick, (Inventory.count(bestPick) + Equipment.count(bestPick)) - 1))
 				{
-					MethodProvider.sleepUntil(() -> (Inventory.count(bestPick) + Equipment.count(bestPick)) == 1, Sleep.calculate(2222, 2222));
+					Sleep.sleepUntil(() -> (Inventory.count(bestPick) + Equipment.count(bestPick)) == 1, Sleepz.calculate(2222, 2222));
 				}
-				Sleep.sleep(111, 111);
+				Sleepz.sleep(111, 111);
 				return false;
 			}
 			Main.customPaintText1 = "~~ Withdrawing "+bestPick +" ~~";
-			MethodProvider.log("~~ Withdrawing "+bestPick +" ~~");
+			Logger.log("~~ Withdrawing "+bestPick +" ~~");
 			if(Bank.withdraw(bestPick, 1))
 			{
-				MethodProvider.sleepUntil(() -> (Inventory.count(bestPick) + Equipment.count(bestPick)) == 1, Sleep.calculate(2222, 2222));
+				Sleep.sleepUntil(() -> (Inventory.count(bestPick) + Equipment.count(bestPick)) == 1, Sleepz.calculate(2222, 2222));
 			}
-			Sleep.sleep(111, 111);
+			Sleepz.sleep(111, 111);
 			return false;
     	}
-    	Sleep.sleep(111, 111);
+    	Sleepz.sleep(111, 111);
     	return false;
     }
     public static String bestPickaxe()
@@ -906,10 +905,10 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     {
 
 		Main.customPaintText1 = "~~ Grabbing bonze pickaxe from Falador spawn ~~";
-		MethodProvider.log("No pick, walking to get bronze one");
+		Logger.log("No pick, walking to get bronze one");
     	//no pickaxe in bank either
     	
-    	if(takePickaxeArea.contains(Players.localPlayer()))
+    	if(takePickaxeArea.contains(p.l))
     	{
     		GroundItem pickaxeGround = GroundItems.closest(g -> g!=null && 
     				g.getName().equals("Bronze pickaxe") && 
@@ -919,15 +918,15 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     		{
     			if(pickaxeGround.interact("Take"))
     			{
-    				MethodProvider.sleepUntil(() -> Inventory.contains("Bronze pickaxe"), 
-    						() -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+    				Sleep.sleepUntil(() -> Inventory.contains("Bronze pickaxe"), 
+    						() -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
     			}
-    			Sleep.sleep(111, 1111);
+    			Sleepz.sleep(111, 1111);
     			return;
     		}
     	}
-    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(takePickaxeArea.getCenter()))) Sleep.sleep(111,1111);
-		Sleep.sleep(111,111);
+    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(takePickaxeArea.getCenter()))) Sleepz.sleep(111,1111);
+		Sleepz.sleep(111,111);
 		return;
     }
     public static void handleBanking()
@@ -936,43 +935,11 @@ public class Mine_n_Smelt_n_Smith extends Leaf {
     	{
     		if(Bank.depositAllExcept("Rune pickaxe","Adamant pickaxe","Mithril pickaxe","Steel pickaxe"))
     		{
-    			MethodProvider.sleepUntil(() -> Inventory.isEmpty() || Inventory.onlyContains("Rune pickaxe","Adamant pickaxe","Mithril pickaxe","Steel pickaxe"), Sleep.calculate(2222, 2222));
-    			Sleep.sleep(420, 1111);
+    			Sleep.sleepUntil(() -> Inventory.isEmpty() || Inventory.onlyContains("Rune pickaxe","Adamant pickaxe","Mithril pickaxe","Steel pickaxe"), Sleepz.calculate(2222, 2222));
+    			Sleepz.sleep(420, 1111);
     		}
     	}
     }
-    
-    /**
-     * returns true if any dialogues can be handled or have been handled
-     * otherwise returns false
-     * @return
-     */
-    public static boolean canHandleDialogues()
-    {
-    	if(Dialogues.isProcessing()) return true;
-    	if(Dialogues.areOptionsAvailable())
-    	{
-    		if(Dialogues.chooseOption("Sorry, would it be OK if I used your anvils?") || 
-    				Dialogues.chooseOption("Yes.") || 
-    				Dialogues.chooseOption("I wanted to use your anvils."))
-    		{
-    			Sleep.sleep(420, 696);
-    			return true;
-    		}
-    		if(Walking.clickTileOnMinimap(Players.localPlayer().getTile())) 
-    		{
-    			Sleep.sleep(696, 420);
-    		}
-    		return true;
-    	}
-    	if(Dialogues.canContinue())
-		{
-    		int sleep = Sleep.calculate(2222,2222);
-			Keyboard.holdSpace(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
-			MethodProvider.sleepUntil(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
-			return true;
-		}
-    	return false;
-    }
+   
     
 }

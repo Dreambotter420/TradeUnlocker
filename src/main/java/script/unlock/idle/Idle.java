@@ -2,20 +2,21 @@ package script.unlock.idle;
 
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.dialogues.Dialogues;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.settings.PlayerSettings;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 
+import script.p;
 import script.framework.Leaf;
 import script.utilities.API;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 public class Idle  extends Leaf {
     public final static Tile idleTile = new Tile(3420, 3185, 1);
@@ -23,7 +24,7 @@ public class Idle  extends Leaf {
     public boolean isValid() {
     	return API.unlockMode == API.modes.IDLE;
     }
-	
+	public static boolean doneIdling = false;
 	public static boolean checkedTime = false;
 	public static Timer timeCheckTimer = new Timer(0);
     @Override
@@ -45,7 +46,7 @@ public class Idle  extends Leaf {
     		if(API.gameTimeHours < 20)
     		{
     			//need to go to idle tile and wait
-    			if(idleTile.getArea(2).contains(Players.localPlayer()))
+    			if(idleTile.getArea(2).contains(p.l))
     			{
     				if(API.gameTimeHours < 19)
     		    	{
@@ -54,7 +55,7 @@ public class Idle  extends Leaf {
     		        		if(!Tabs.isOpen(Tab.SKILLS))
     		        		{
     		        			Tabs.open(Tab.SKILLS);
-    		        			Sleep.sleep(555, 4444);
+    		        			Sleepz.sleep(555, 4444);
     		        		}
     		        		if(Tabs.isOpen(Tab.SKILLS))
     		        		{
@@ -84,8 +85,8 @@ public class Idle  extends Leaf {
     		        				{
     		        					Mouse.move(Widgets.getWidgetChild(320,childID).getRectangle());
     		        					int secs = (int) Calculations.nextGaussianRandom(200000, 42000);
-    									MethodProvider.log("Reset idle by hovering a skills icon, waiting for another " + ((int) (secs / 1000)) + " seconds");
-    									MethodProvider.sleep(secs);
+    									Logger.log("Reset idle by hovering a skills icon, waiting for another " + ((int) (secs / 1000)) + " seconds");
+    									Sleep.sleep(secs);
     		        				}
     		        			}
     		        		}
@@ -109,11 +110,12 @@ public class Idle  extends Leaf {
     		//we have achieved at least 20 hours gametime
     		else
     		{
-    			API.unlockMode = API.modes.QUEST;
-    			MethodProvider.log("Switching trade unlock mode to QUEST");
+    			API.unlockMode = null;
+    			doneIdling = true;
+    			Logger.log("All done getting 20 hours!");
     		}
     	}
-		return Sleep.calculate(420,1111);
+		return Sleepz.calculate(420,1111);
     }
     
     public static void checkTimePlayed()
@@ -121,8 +123,8 @@ public class Idle  extends Leaf {
     	if(!Tabs.isOpen(Tab.QUEST)) 
     	{
     		Tabs.open(Tab.QUEST);
-    		MethodProvider.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), Sleep.calculate(2000, 2222));
-    		Sleep.sleep(69, 420);
+    		Sleep.sleepUntil(() -> Tabs.isOpen(Tab.QUEST), Sleepz.calculate(2000, 2222));
+    		Sleepz.sleep(69, 420);
     	}
 		if(Tabs.isOpen(Tab.QUEST))
 		{
@@ -134,10 +136,10 @@ public class Idle  extends Leaf {
 				{
 					if(Widgets.getWidgetChild(629,7).interact("Character Summary")) 
 					{
-						MethodProvider.sleepUntil(() -> PlayerSettings.getConfig(1141) == 0, Sleep.calculate(2222, 1111));
-						Sleep.sleep(69, 420);
+						Sleep.sleepUntil(() -> PlayerSettings.getConfig(1141) == 0, Sleepz.calculate(2222, 1111));
+						Sleepz.sleep(69, 420);
 					}
-					else MethodProvider.log("did not click Character Summary minitab while Quest tab open");
+					else Logger.log("did not click Character Summary minitab while Quest tab open");
 				}
 			}
 			if(PlayerSettings.getConfig(1141) == 0)
@@ -150,10 +152,10 @@ public class Idle  extends Leaf {
 					{
 						if(Widgets.getWidgetChild(712, 2 , 100).interact("Reveal"))
 						{
-							MethodProvider.sleepUntil(() -> PlayerSettings.getBitValue(12933) != 0, Sleep.calculate(2000, 2332));
-							Sleep.sleep(69, 420);
+							Sleep.sleepUntil(() -> PlayerSettings.getBitValue(12933) != 0, Sleepz.calculate(2000, 2332));
+							Sleepz.sleep(69, 420);
 						}
-						else MethodProvider.log("Did not click reveal mask button while character Summary minitab open");
+						else Logger.log("Did not click reveal mask button while character Summary minitab open");
 					}
 				}
 				if(PlayerSettings.getBitValue(12933) != 0)
@@ -164,13 +166,13 @@ public class Idle  extends Leaf {
 					{
 						if(Widgets.getWidgetChild(629,7).interact("Character Summary"))
 						{
-							Sleep.sleep(1231, 1234);
+							Sleepz.sleep(1231, 1234);
 							clicked = true;
 						}
 					}
 					else
 					{
-						MethodProvider.log("Something wrong clicking Character Summary minitab while idling to refresh time");
+						Logger.log("Something wrong clicking Character Summary minitab while idling to refresh time");
 					}
 					if(clicked &&
 							Widgets.getWidgetChild(712, 2 , 100) != null &&
@@ -197,24 +199,24 @@ public class Idle  extends Leaf {
 						    }
 						}
 						API.gameTimeHours = gameTimeHours;
-						MethodProvider.log("Checked gametime hours, and have: " + API.gameTimeHours + " gametime hours");
+						Logger.log("Checked gametime hours, and have: " + API.gameTimeHours + " gametime hours");
 						checkedTime = true;
 						if(gameTimeHours >= 20) 
 						{
-							MethodProvider.log("Have at least 20 hours!");
+							Logger.log("Have at least 20 hours!");
 							return;
 						}
 						int secs = (int) Calculations.nextGaussianRandom(200000, 42000);
-						MethodProvider.log("Also reset idle by clicking time played icon, waiting for another " + ((int) (secs / 1000)) + " seconds");
+						Logger.log("Also reset idle by clicking time played icon, waiting for another " + ((int) (secs / 1000)) + " seconds");
 						int timerSecs = (int) Calculations.nextGaussianRandom(4200000, 300000);
-						MethodProvider.log("Also... reset timer until next forcecheck to " + ((int) (timerSecs / 60000)) + " minutes");
+						Logger.log("Also... reset timer until next forcecheck to " + ((int) (timerSecs / 60000)) + " minutes");
 						timeCheckTimer = new Timer(timerSecs);
 						
-						MethodProvider.sleep(secs);
+						Sleep.sleep(secs);
 					}
 					else
 					{
-						MethodProvider.log("Something wrong getting text of Time Played while character Summary minitab open");
+						Logger.log("Something wrong getting text of Time Played while character Summary minitab open");
 					}
 				}
 			}

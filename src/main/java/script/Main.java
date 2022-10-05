@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.time.LocalDateTime;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.script.*;
 import org.dreambot.api.script.listener.ChatListener;
+import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Timer;
 import script.behaviour.*;
 import script.framework.Tree;
@@ -19,7 +19,7 @@ import script.unlock.skills.skills.Chop_n_Burn;
 import script.unlock.skills.skills.Fish_n_Cook;
 import script.unlock.skills.skills.Mine_n_Smelt_n_Smith;
 import script.utilities.API;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 
 @ScriptManifest(
@@ -35,20 +35,20 @@ public class Main extends AbstractScript implements PaintInfo, ChatListener
     @Override
     public void onStart(String[] args)
     {
-    	MethodProvider.log("Trade unlocker starting!");
+    	Logger.log("Trade unlocker starting!");
     	timer = new Timer(2000000000);
     	Keyboard.setWordsPerMinute(150);
-    	Sleep.dt = LocalDateTime.now();
+    	Sleepz.dt = LocalDateTime.now();
         API.runTimer = new Timer();
         instantiateTree();
     }
     @Override
     public void onStart()
     {
-    	MethodProvider.log("Trade unlocker starting!");
+    	Logger.log("Trade unlocker starting!");
     	timer = new Timer(2000000000);
     	Keyboard.setWordsPerMinute(150);
-    	Sleep.dt = LocalDateTime.now();
+    	Sleepz.dt = LocalDateTime.now();
         API.runTimer = new Timer();
         instantiateTree();
     }
@@ -58,20 +58,21 @@ public class Main extends AbstractScript implements PaintInfo, ChatListener
     private void instantiateTree() {
         tree.addBranches(
         		new WaitForLogged_N_Loaded(),
+        		new p(),
     			new Initialize(),
     			new ContinueDialogue(),
     			new DecisionLeaf(),
     			new Chop_n_Burn(),
     			new Fish_n_Cook(),
     			new Mine_n_Smelt_n_Smith(),
-    			new Idle(),
     			new TrainMelee().addLeafs(
-    				new DropItemsBuryBones(),
-    				new GetBestWeapon(),
-    				new HandleAttackStyles(),
-    				new DetectPlayer(),
-    				new AttackChickens(),
-    				new AttackCows()),
+        				new DropItemsBuryBones(),
+        				new GetBestWeapon(),
+        				new HandleAttackStyles(),
+        				new DetectPlayer(),
+        				new AttackChickens(),
+        				new AttackCows()),
+    			new Idle(),
     			new Questing());
     }
     @Override

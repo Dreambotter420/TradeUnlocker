@@ -3,7 +3,7 @@ package script.behaviour;
 import org.dreambot.api.methods.dialogues.Dialogues;
 
 import script.framework.Leaf;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 public class ContinueDialogue extends Leaf {
 
@@ -16,9 +16,9 @@ public class ContinueDialogue extends Leaf {
     public int onLoop() {
     	if(Dialogues.continueDialogue())
     	{
-    		Sleep.sleep(666,111);
+    		Sleepz.sleep(666,111);
     	}
-		return Sleep.calculate(111,111);
+		return Sleepz.calculate(111,111);
     }
 
 }

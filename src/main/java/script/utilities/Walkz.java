@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.dreambot.api.methods.MethodProvider;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Map;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.utilities.Logger;
 
+import script.p;
 public class Walkz {
 	public static boolean walkToArea(Area area,Tile walkableTile)
 	{
-		if(area.contains(Players.localPlayer())) return true;
+		if(area.contains(p.l)) return true;
 		if(!Walking.isRunEnabled() &&
-				Walking.getRunEnergy() > Sleep.calculate(15, 20)) 
+				Walking.getRunEnergy() > Sleepz.calculate(15, 20)) 
 		{
 			Walking.toggleRun();
 		}
@@ -24,16 +24,16 @@ public class Walkz {
 		{
 			Walking.walk(walkableTile);
 		}
-		Sleep.sleep(666, 1111);
-		return area.contains(Players.localPlayer());
+		Sleepz.sleep(666, 1111);
+		return area.contains(p.l);
 	}
 	public static boolean walkToTileInRadius(Tile walkableTile,int radius)
 	{
 		Area area = walkableTile.getArea(radius);
 		
-		if(area.contains(Players.localPlayer())) return true;
+		if(area.contains(p.l)) return true;
 		if(!Walking.isRunEnabled() &&
-				Walking.getRunEnergy() > Sleep.calculate(15, 20)) 
+				Walking.getRunEnergy() > Sleepz.calculate(15, 20)) 
 		{
 			Walking.toggleRun();
 		}
@@ -42,8 +42,8 @@ public class Walkz {
 			Walking.walk(walkableTile);
 		}
 		
-		Sleep.sleep(666, 1111);
-		return area.contains(Players.localPlayer());
+		Sleepz.sleep(666, 1111);
+		return area.contains(p.l);
 	}
 	public static boolean walkPath(Tile[] path, boolean backwards)
 	{
@@ -62,20 +62,20 @@ public class Walkz {
 				{
 					if(Walking.walk(t))
 					{
-						MethodProvider.log("Walked on path(regular walk)!");
-						Sleep.sleep(696,420);
+						Logger.log("Walked on path(regular walk)!");
+						Sleepz.sleep(696,420);
 					}
 					else if(Walking.clickTileOnMinimap(t))
 					{
-						MethodProvider.log("Walked on path (map)!");
-						Sleep.sleep(696,420);
+						Logger.log("Walked on path (map)!");
+						Sleepz.sleep(696,420);
 					}
 					else if(Map.interact(t,"Walk here"))
 					{
-						MethodProvider.log("Walked here on path (screen)!");
-						Sleep.sleep(696,420);
+						Logger.log("Walked here on path (screen)!");
+						Sleepz.sleep(696,420);
 					}
-					else MethodProvider.log("Missed path walk on valid tile");
+					else Logger.log("Missed path walk on valid tile");
 				}
 				return true;
 			}

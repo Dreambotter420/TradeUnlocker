@@ -1,13 +1,13 @@
 package script.unlock.skills.melee;
 
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
-import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.utilities.Sleep;
 
 import script.framework.Leaf;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
+import script.p;
 public class DropItemsBuryBones extends Leaf {
     @Override
     public boolean isValid() {
@@ -18,21 +18,21 @@ public class DropItemsBuryBones extends Leaf {
 
     @Override
     public int onLoop() {
-    	if(Players.localPlayer().isInCombat())
+    	if(p.l.isInCombat())
     	{
-    		MethodProvider.sleep((int)Calculations.nextGaussianRandom(666,111));
-    		return Sleep.calculate(111,1111);
+    		Sleep.sleep((int)Calculations.nextGaussianRandom(666,111));
+    		return Sleepz.calculate(111,1111);
     	}
     	if(Inventory.contains("Bones") && 
     			Inventory.get("Bones").interact("Bury"))
     	{
-    		MethodProvider.sleep((int)Calculations.nextGaussianRandom(666,111));
+    		Sleep.sleep((int)Calculations.nextGaussianRandom(666,111));
     	}
     	if(Inventory.contains("Cowhide", "Beef", "Egg", "Raw chicken") &&
     			Inventory.dropAll("Cowhide", "Beef", "Egg", "Raw chicken"))
     	{
-    		MethodProvider.sleep((int)Calculations.nextGaussianRandom(666,111));
+    		Sleep.sleep((int)Calculations.nextGaussianRandom(666,111));
     	}
-        return Sleep.calculate(111,1111);
+        return Sleepz.calculate(111,1111);
     }
 }

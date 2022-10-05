@@ -1,19 +1,20 @@
 package script.unlock.skills.melee;
 
 import org.dreambot.api.input.Mouse;
+import script.p;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.interactive.NPCs;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.NPC;
 
 import script.framework.Leaf;
 import script.utilities.API;
 import script.utilities.Locations;
 import script.utilities.MissingAPI;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 import script.utilities.Walkz;
 
 public class AttackCows extends Leaf  {
@@ -29,7 +30,7 @@ public class AttackCows extends Leaf  {
     
     @Override
     public int onLoop() {
-    	Sleep.sleep(69,420);
+    	Sleepz.sleep(69,420);
         if (Walkz.walkToArea(Locations.LARGE_COWPEN, Locations.LARGE_COWPEN_WALKABLE))
         {
         	NPC cow = NPCs.closest(q -> q != null &&
@@ -42,10 +43,10 @@ public class AttackCows extends Leaf  {
         	if (cow != null) 
         	{
                 if (!MissingAPI.isInCombat()) {
-                	Sleep.sleep(111,3333);
+                	Sleepz.sleep(111,3333);
                 	if (cow.interact("Attack")) 
                 	{
-                		MethodProvider.sleep((int)Calculations.nextGaussianRandom(666,222));
+                		Sleep.sleep((int)Calculations.nextGaussianRandom(666,222));
                 		if(Calculations.nextGaussianRandom(555,111) < 450)
                 		{
                 			Mouse.moveMouseOutsideScreen();
@@ -54,10 +55,10 @@ public class AttackCows extends Leaf  {
                 } 
                 else 
                 {
-                    MethodProvider.sleepWhile(() -> Players.localPlayer().isAnimating(), () -> Players.localPlayer().isAnimating(),5000,50);
+                    Sleep.sleepWhile(() -> p.l.isAnimating(), () -> p.l.isAnimating(),5000,50);
                 }
            }
         }
-        return Sleep.calculate(111,1111);
+        return Sleepz.calculate(111,1111);
     }
 }

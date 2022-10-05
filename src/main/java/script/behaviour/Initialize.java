@@ -2,11 +2,12 @@ package script.behaviour;
 
 import java.time.LocalTime;
 
-import org.dreambot.api.methods.MethodProvider;
+import org.dreambot.api.utilities.Logger;
+
 import script.framework.Leaf;
 import script.utilities.API;
 import script.utilities.Locations;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 
 public class Initialize extends Leaf {
@@ -20,12 +21,12 @@ public class Initialize extends Leaf {
     @Override
     public int onLoop() {
     	API.rand2.setSeed(LocalTime.now().getNano());
-    	Sleep.initSleepMod = 1.2 + (API.rand2.nextDouble()/1.25);
-    	Sleep.initSleepMod = Sleep.initSleepMod * Sleep.initSleepMod;
+    	Sleepz.initSleepMod = 1.2 + (API.rand2.nextDouble()/1.25);
+    	Sleepz.initSleepMod = Sleepz.initSleepMod * Sleepz.initSleepMod;
     	//all initial randomizations that depend on new random seed go here
     	API.randomizeSkillSetpoints();
     	Locations.chooseLocations();
-    	MethodProvider.log("Initialized");
+    	Logger.log("Initialized");
 		API.initialized = true;
         return 5;
     }

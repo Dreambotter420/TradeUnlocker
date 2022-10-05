@@ -1,18 +1,19 @@
 package script.unlock.quests;
 
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.NPCs;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.quest.Quests;
 import org.dreambot.api.methods.settings.PlayerSettings;
 import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.NPC;
 
+import script.p;
 import script.framework.Leaf;
 import script.utilities.API;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 public class Questing  extends Leaf {
     public final Tile idleTile = new Tile(3420, 3185, 1);
@@ -25,7 +26,9 @@ public class Questing  extends Leaf {
     public int onLoop() {
     	if(Quests.getQuestPoints() >= 10)
     	{
-    		MethodProvider.log("U got 10qp already! Nice :-)");
+    		Logger.log("~~~~~~~~~~~~~~");
+    		Logger.log("U got 10 a q p + 100 total lvl + 20 hrs playtime! Have fun trading directly to other players :-)");
+    		Logger.log("~~~~~~~~~~~~~~");
     		return -1;
     	}
     	
@@ -33,14 +36,14 @@ public class Questing  extends Leaf {
     	{
     		//start questing now
 			QuestScriptStarter questStarter = new QuestScriptStarter();
-			MethodProvider.log("Attempting to stop current script and start tmp's Ten QP");
+			Logger.log("Attempting to stop current script and start tmp's Ten QP");
 			Thread t1 = new Thread(questStarter);
 			t1.start();
 			return -1;
     	}
     	else
     	{
-    		if(veronicaTile.getArea(5).contains(Players.localPlayer()))
+    		if(veronicaTile.getArea(5).contains(p.l))
         	{
         		if(Dialogues.inDialogue())
         		{
@@ -54,14 +57,14 @@ public class Questing  extends Leaf {
         			}
         			else if(!Dialogues.isProcessing())
         			{
-        				MethodProvider.log("Error in dialogue handler of quest starting for tmps 10 qp fuck up");
+        				Logger.log("Error in dialogue handler of quest starting for tmps 10 qp fuck up");
         			}
         		}
         		else
         		{
-        			if(!Players.localPlayer().isMoving() || (Players.localPlayer().isMoving() && 
-        					Players.localPlayer().getInteractingCharacter() != null &&
-        					!Players.localPlayer().getInteractingCharacter().getName().contains("Veronica")))
+        			if(!p.l.isMoving() || (p.l.isMoving() && 
+        					p.l.getInteractingCharacter() != null &&
+        					!p.l.getInteractingCharacter().getName().contains("Veronica")))
         			{
         				NPC veronica = NPCs.closest("Veronica");
         				if(veronica == null || 
@@ -76,7 +79,7 @@ public class Questing  extends Leaf {
         				else
         				{
         					veronica.interact("Talk-to");
-        					MethodProvider.sleepUntil(Dialogues::inDialogue, 5000);
+        					Sleep.sleepUntil(Dialogues::inDialogue, 5000);
         				}
         			}
         		}
@@ -90,7 +93,7 @@ public class Questing  extends Leaf {
         	}
     	}
     	
-		return Sleep.calculate(420,1111);
+		return Sleepz.calculate(420,1111);
     }
 }
 

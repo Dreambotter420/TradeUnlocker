@@ -1,6 +1,7 @@
 package script.utilities;
 
 import java.awt.Point;
+import script.p;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 import org.dreambot.api.Client;
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.combat.Combat;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.Shop;
@@ -25,6 +25,8 @@ import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.methods.world.Worlds;
 import org.dreambot.api.methods.worldhopper.WorldHopper;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.interactive.Player;
@@ -52,7 +54,7 @@ public class MissingAPI {
 			}
 			if(!listed)
 			{
-				MethodProvider.log("Found illegal item name in inventory (not allowed in list check): " + i.getName());
+				Logger.log("Found illegal item name in inventory (not allowed in list check): " + i.getName());
 				return false;
 			}
 		}
@@ -61,29 +63,29 @@ public class MissingAPI {
 	}
 	public static boolean scrollHopWorld(int world)
 	{
-		if(Players.localPlayer().isInCombat()) return false;
+		if(p.l.isInCombat()) return false;
 		if(Worlds.getCurrentWorld() == world) 
 		{
-			MethodProvider.log("Hopped to world " + world+ " already!");
+			Logger.log("Hopped to world " + world+ " already!");
 			return true;
 		}
-		Timer timeout = new Timer(Sleep.calculate(18000, 5555));
+		Timer timeout = new Timer(Sleepz.calculate(18000, 5555));
 		while(Worlds.getCurrentWorld() != world && 
 				!timeout.finished() && 
 				Client.isLoggedIn() && 
-				!Players.localPlayer().isInCombat() && 
+				!p.l.isInCombat() && 
 				Skills.getRealLevel(Skill.HITPOINTS) > 0)
 		{	
-			Sleep.sleep(69, 69);
+			Sleepz.sleep(69, 69);
 			if(Dialogues.isProcessing())
 			{
-				MethodProvider.sleepUntil(() -> !Dialogues.isProcessing(), Sleep.calculate(2222, 2222));
+				Sleep.sleepUntil(() -> !Dialogues.isProcessing(), Sleepz.calculate(2222, 2222));
 				continue;
 			}
 			if(Dialogues.canContinue())
 			{
 				Dialogues.continueDialogue();
-				MethodProvider.sleep(Sleep.calculate(420, 696));
+				Sleep.sleep(Sleepz.calculate(420, 696));
 				continue;
 			}
 			if(Bank.isOpen()) Bank.close();
@@ -94,7 +96,7 @@ public class MissingAPI {
 					Widgets.getWidgetChild(69,2).isVisible() &&
 					Widgets.getWidgetChild(69,2).getText().contains("Loading..."))
 			{
-				Sleep.sleep(100, 1111);
+				Sleepz.sleep(100, 1111);
 				continue;
 			}
 			if(Widgets.getWidgetChild(182, 7) != null &&
@@ -102,13 +104,13 @@ public class MissingAPI {
 					Widgets.getWidgetChild(182, 7).getText().contains("World Switcher"))
 			{
 				Widgets.getWidgetChild(182, 3).interact("World Switcher");
-				Sleep.sleep(100, 1111);
+				Sleepz.sleep(100, 1111);
 				continue;
 			}
 			if(!Tabs.isOpen(Tab.LOGOUT))
 			{
 				Tabs.open(Tab.LOGOUT);
-				Sleep.sleep(100, 1111);
+				Sleepz.sleep(100, 1111);
 				continue;
 			}
 			//worlds are now loaded
@@ -130,14 +132,14 @@ public class MissingAPI {
 				if(gc >= 0) worldWidget = Widgets.getWidgetChild(69,17,gc);
 				if(worldWidget == null) 
 				{
-					Sleep.sleep(100, 111);
+					Sleepz.sleep(100, 111);
 					continue;
 				}
 				Rectangle worldRectangle = worldWidget.getRectangle();
 				WidgetChild worldListContainer = Widgets.getWidgetChild(69,17);
 				if(worldListContainer == null)
 				{
-					Sleep.sleep(100, 111);
+					Sleepz.sleep(100, 111);
 					continue;
 				}
 				if(worldRectangle.intersects(Widgets.getWidgetChild(69,15).getRectangle()))
@@ -156,7 +158,7 @@ public class MissingAPI {
 					WidgetChild scrollContainer = Widgets.getWidgetChild(69,18,0);
 					if(scrollContainer == null)
 					{
-						Sleep.sleep(100, 111);
+						Sleepz.sleep(100, 111);
 						continue;
 					}
 					double yScrollMin = scrollContainer.getRectangle().getMinY();
@@ -164,29 +166,29 @@ public class MissingAPI {
 					int yClickPos = (int) ((scrollContainer.getHeight() * offsetRatio) + yScrollMin);
 					Mouse.click(new Point(xRand,yClickPos));
 				}
-				Sleep.sleep(111, 1111);
+				Sleepz.sleep(111, 1111);
 				continue;
 			}
-			Sleep.sleep(111, 1111);
+			Sleepz.sleep(111, 1111);
 		}
 		if(Worlds.getCurrentWorld() == world) 
 		{
-			MethodProvider.log("Hopped to world " + world+ "!");
+			Logger.log("Hopped to world " + world+ "!");
 			return true;
 		}
 		return false;
 	}
 	public static void hopWorld(int world)
 	{
-		if(Players.localPlayer().isInCombat() ||
+		if(p.l.isInCombat() ||
 				Worlds.getCurrentWorld() == world) return;
-		Timer timeout = new Timer(Sleep.calculate(8888, 1111));
+		Timer timeout = new Timer(Sleepz.calculate(8888, 1111));
 		while(Worlds.getCurrentWorld() != world || 
 				!Client.isLoggedIn())
 		{
 			if(timeout.finished()) break;
 			WorldHopper.hopWorld(world);
-			Sleep.sleep(10, 111);
+			Sleepz.sleep(10, 111);
 		}
 	}
 	public static boolean invyContainsAnythingOtherThan(List<Integer> itemIDs)
@@ -197,7 +199,7 @@ public class MissingAPI {
 			for(Item i : Inventory.all())
 			{
 				int id = i.getID();
-				MethodProvider.log("Found itemID: " + id);
+				Logger.log("Found itemID: " + id);
 				if(id == -1) continue;
 				boolean found = false;
 				for(int itemID : itemIDs)
@@ -276,7 +278,7 @@ public class MissingAPI {
 	}
 	public static boolean isInteractedByNPC()
 	{
-		List<NPC> targetedBy = getAllNPCsInteractingWith(Players.localPlayer());
+		List<NPC> targetedBy = getAllNPCsInteractingWith(p.l);
 		for(NPC npc : targetedBy)
 		{
 			if(npc != null)
@@ -288,7 +290,7 @@ public class MissingAPI {
 	}
 	public static boolean isInteracting()
 	{
-		return Players.localPlayer().getInteractingCharacter() != null;
+		return p.l.getInteractingCharacter() != null;
 	}
 	public static boolean isInCombat()
 	{
@@ -299,7 +301,7 @@ public class MissingAPI {
 		NPC npc = NPCs.closest(NPC);
 		if(npc == null) 
 		{
-			MethodProvider.log("NPC: \""+NPC+"\" not found in TalkToNPC call");
+			Logger.log("NPC: \""+NPC+"\" not found in TalkToNPC call");
 			return false;
 		}
 		else
@@ -307,11 +309,11 @@ public class MissingAPI {
 			if(npc.getSurroundingArea(1).canReach())
 			{
 				npc.interact("Talk-to");
-				Sleep.sleep(666,111);
-				MethodProvider.sleepUntil(
+				Sleepz.sleep(666,111);
+				Sleep.sleepUntil(
 						() -> Dialogues.inDialogue(),
-						Sleep.calculate(5555,1111));
-				Sleep.sleep(111,1111);
+						Sleepz.calculate(5555,1111));
+				Sleepz.sleep(111,1111);
 			}
 			else 
 			{
@@ -342,7 +344,7 @@ public class MissingAPI {
 	}
 	public static boolean isInteractedByAnotherPlayer()
 	{
-		List<Player> targetedBy = getAllPlayersInteractingWith(Players.localPlayer());
+		List<Player> targetedBy = getAllPlayersInteractingWith(p.l);
 		for(Player player : targetedBy)
 		{
 			if(player != null)
@@ -363,7 +365,7 @@ public class MissingAPI {
 		List<Player> targetedBy = getAllPlayersInteractingWith(playerToCheck); 
 		for(Player player : targetedBy)
 		{
-			if(player != null && !player.equals(Players.localPlayer()))
+			if(player != null && !player.equals(p.l))
 			{
 				return true;
 			}
@@ -375,7 +377,7 @@ public class MissingAPI {
 		List<Player> targetedBy = getAllPlayersInteractingWith(npcToCheck);
 		for(Player player : targetedBy)
 		{
-			if(player != null && !player.equals(Players.localPlayer()))
+			if(player != null && !player.equals(p.l))
 			{
 				return true;
 			}
@@ -452,7 +454,7 @@ public class MissingAPI {
 	}
 	public static boolean isInteractedWith() //no argument assumes from local player
 	{
-		return isInteractedByAnotherPlayer(Players.localPlayer()) || isInteractedByAnotherNPC(Players.localPlayer());
+		return isInteractedByAnotherPlayer(p.l) || isInteractedByAnotherNPC(p.l);
 	}
 	public static boolean isInteractedWith(NPC toCheck)
 	{

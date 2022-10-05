@@ -1,18 +1,15 @@
 package script.unlock.skills.skills;
 
 import org.dreambot.api.input.Mouse;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.container.impl.bank.BankMode;
-import org.dreambot.api.methods.container.impl.bank.BankType;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.NPCs;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Map;
 import org.dreambot.api.methods.map.Tile;
@@ -21,15 +18,17 @@ import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.helpers.ItemProcessing;
-import org.dreambot.api.wrappers.interactive.Entity;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.NPC;
 import script.Main;
 import script.behaviour.DecisionLeaf;
 import script.framework.Leaf;
 import script.utilities.API;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
+import script.p;
 public class Fish_n_Cook extends Leaf {
 
     @Override
@@ -43,9 +42,9 @@ public class Fish_n_Cook extends Leaf {
     
     @Override
     public int onLoop() {
-    	if(canHandleDialogues())
+    	if(API.canHandleDialogues())
 		{
-			return Sleep.calculate(69, 69);
+			return Sleepz.calculate(69, 69);
 		}
     	if(DecisionLeaf.taskTimer.finished())
     	{
@@ -58,9 +57,9 @@ public class Fish_n_Cook extends Leaf {
     					Bank.close();
     				}
     			}
-    			return Sleep.calculate(420,1111);
+    			return Sleepz.calculate(420,1111);
     		}
-    		MethodProvider.log("Finished fishing task!");
+    		Logger.log("Finished fishing task!");
     		API.unlockMode = null;
     		return 10;
     	}
@@ -77,14 +76,14 @@ public class Fish_n_Cook extends Leaf {
         		if(!Inventory.contains("Raw shrimps") && !Inventory.contains("Raw anchovies"))
         		{
         			handleBanking();
-        			return Sleep.calculate(111,1212);
+        			return Sleepz.calculate(111,1212);
         		}
         		cookFish();
-        		return Sleep.calculate(111,1212);
+        		return Sleepz.calculate(111,1212);
         	}
         	walkFish();
     	}
-		return Sleep.calculate(111,111);
+		return Sleepz.calculate(111,111);
     }
     private final static Area takeAxeArea = new Area(3230, 3298, 3236, 3292, 0);
     public static boolean getAxe()
@@ -105,12 +104,11 @@ public class Fish_n_Cook extends Leaf {
     		if(Inventory.interact(axe, "Wield"))
     		{
     			final String axeFinal = axe;
-    			MethodProvider.sleepUntil(() -> Equipment.contains(axeFinal), Sleep.calculate(2222,2222));
+    			Sleep.sleepUntil(() -> Equipment.contains(axeFinal), Sleepz.calculate(2222,2222));
     		}
     		return false;
     	}
-    	//no axe in invy
-    	axe = null;
+    	//no iron/bronze axe in invy
     	if(Bank.contains("Rune axe","Adamant axe","Mithril axe","Steel axe","Iron axe","Bronze axe")) 
     	{
     		axe = Bank.get("Rune axe","Adamant axe","Mithril axe","Steel axe","Iron axe","Bronze axe").getName();
@@ -122,16 +120,16 @@ public class Fish_n_Cook extends Leaf {
     			if(Bank.getWithdrawMode() != BankMode.ITEM)
     			{
     				Bank.setWithdrawMode(BankMode.ITEM);
-    				Sleep.sleep(111,222);
+    				Sleepz.sleep(111,222);
     				return false;
     			}
     			if(Bank.withdraw(axe,1))
     			{
         			final String axeFinal = axe;
-    				MethodProvider.sleepUntil(() -> Inventory.contains(axeFinal), Sleep.calculate(2222,2222));
+    				Sleep.sleepUntil(() -> Inventory.contains(axeFinal), Sleepz.calculate(2222,2222));
     			}
     		}
-    		Sleep.sleep(111,444);
+    		Sleepz.sleep(111,444);
     		return false;
     	}
     	//no axe in bank either
@@ -146,14 +144,14 @@ public class Fish_n_Cook extends Leaf {
     		{
     			if(axeLog.interact("Take-axe"))
     			{
-    				MethodProvider.sleepUntil(() -> Inventory.contains("Bronze axe"), 
-    						() -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+    				Sleep.sleepUntil(() -> Inventory.contains("Bronze axe"), 
+    						() -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
     			}
     			return false;
     		}
     	}
-    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(takeAxeArea.getRandomTile()))) Sleep.sleep(111,1111);
-		Sleep.sleep(111,111);
+    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(takeAxeArea.getRandomTile()))) Sleepz.sleep(111,1111);
+		Sleepz.sleep(111,111);
 		return false;
     }
     private final static Area fishNetArea = new Area(3245, 3154, 3242, 3159, 0);
@@ -170,15 +168,15 @@ public class Fish_n_Cook extends Leaf {
     		{
     			if(fishNet.interact("Take"))
     			{
-    				MethodProvider.sleepUntil(() -> Inventory.contains("Small fishing net"),
-    						() -> Players.localPlayer().isMoving() || Players.localPlayer().isAnimating(),
-    						Sleep.calculate(2222,2222),69);
+    				Sleep.sleepUntil(() -> Inventory.contains("Small fishing net"),
+    						() -> p.l.isMoving() || p.l.isAnimating(),
+    						Sleepz.calculate(2222,2222),69);
     			}
     			return false;
     		}
     	}
-    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(fishNetArea.getRandomTile()))) Sleep.sleep(111,1111);
-		Sleep.sleep(111,111);
+    	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(fishNetArea.getRandomTile()))) Sleepz.sleep(111,1111);
+		Sleepz.sleep(111,111);
 		return false;
     }
     private final static Area tinderboxArea = new Area(3094, 3251, 3087, 3255, 1);
@@ -187,7 +185,7 @@ public class Fish_n_Cook extends Leaf {
 	private final static Area wizardDudeArea = new Area(3087, 3255, 3094, 3251, 0);
     public static boolean getTinderbox()
     {
-    	if(Inventory.contains("Tinderbox") && !tinderboxArea.contains(Players.localPlayer())) return true;
+    	if(Inventory.contains("Tinderbox") && !tinderboxArea.contains(p.l)) return true;
     	if(Bank.contains("Tinderbox"))
     	{
     		if(Bank.open(Bank.getClosestBankLocation()))
@@ -195,27 +193,27 @@ public class Fish_n_Cook extends Leaf {
     			if(Bank.getWithdrawMode() != BankMode.ITEM)
     			{
     				Bank.setWithdrawMode(BankMode.ITEM);
-    				Sleep.sleep(111,222);
+    				Sleepz.sleep(111,222);
     				return false;
     			}
     			if(Bank.withdraw("Tinderbox",1))
     			{
-    				MethodProvider.sleepUntil(() -> Inventory.contains("Tinderbox"), Sleep.calculate(2222,2222));
+    				Sleep.sleepUntil(() -> Inventory.contains("Tinderbox"), Sleepz.calculate(2222,2222));
     			}
     		}
-    		Sleep.sleep(111,444);
+    		Sleepz.sleep(111,444);
     		return false;
     	}
     	if(PlayerSettings.getConfig(279) == 0) //need to talk to wizard dued
 		{
     		if(Dialogues.canContinue())
 			{
-				if(Dialogues.continueDialogue()) Sleep.sleep(696,420);
+				if(Dialogues.continueDialogue()) Sleepz.sleep(696,420);
 				return false;
 			}
 			if(Dialogues.isProcessing()) 
 			{	
-				Sleep.sleep(696,420);
+				Sleepz.sleep(696,420);
 				return false;
 			}
 			NPC wiseOldMan = NPCs.closest(n -> n!=null && n.getName().equals("Wise Old Man"));
@@ -225,18 +223,18 @@ public class Fish_n_Cook extends Leaf {
 				{
 					if(wiseOldMan.interact("Talk-to"))
 					{
-						MethodProvider.sleepUntil(Dialogues::inDialogue,
-								()->Players.localPlayer().isMoving(),3000,69);
+						Sleep.sleepUntil(Dialogues::inDialogue,
+								()->p.l.isMoving(),3000,69);
 					}
 					return false;
 				}
 			}
-			if(Walking.shouldWalk(6) && Walking.walk(wizardDudeTile)) Sleep.sleep(111,1111);
-			Sleep.sleep(111,111);
+			if(Walking.shouldWalk(6) && Walking.walk(wizardDudeTile)) Sleepz.sleep(111,1111);
+			Sleepz.sleep(111,111);
 			return false;
 		}
     	// must be OK to get tinderboxes now
-    	if(tinderboxArea.contains(Players.localPlayer()))
+    	if(tinderboxArea.contains(p.l))
 		{
     		if(Inventory.contains("Tinderbox"))
     		{
@@ -245,8 +243,8 @@ public class Fish_n_Cook extends Leaf {
     			{
     				if(staircase.interact("Climb-down"))
     				{
-    					MethodProvider.sleepUntil(() -> !tinderboxArea.contains(Players.localPlayer()),
-    							() -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+    					Sleep.sleepUntil(() -> !tinderboxArea.contains(p.l),
+    							() -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
     				}
     			}
     			return false;
@@ -258,12 +256,12 @@ public class Fish_n_Cook extends Leaf {
 				if(books.interact("Search"))
 				{
 					Mouse.moveMouseOutsideScreen();
-					MethodProvider.sleepUntil(() -> Inventory.contains("Tinderbox"),
-							() -> Players.localPlayer().isMoving() || Players.localPlayer().isAnimating(),Sleep.calculate(2222,2222),69);
-					Sleep.sleep(111,1111);
+					Sleep.sleepUntil(() -> Inventory.contains("Tinderbox"),
+							() -> p.l.isMoving() || p.l.isAnimating(),Sleepz.calculate(2222,2222),69);
+					Sleepz.sleep(111,1111);
 				}
 			}
-			Sleep.sleep(111,111);
+			Sleepz.sleep(111,111);
 			return false;
 		}
 		GameObject staircase = GameObjects.closest(g -> g!=null &&
@@ -275,12 +273,12 @@ public class Fish_n_Cook extends Leaf {
 		{
 			if(staircase.interact("Climb-up"))
 			{
-				MethodProvider.sleepUntil(() -> tinderboxArea.contains(Players.localPlayer()), () -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222), 69);
+				Sleep.sleepUntil(() -> tinderboxArea.contains(p.l), () -> p.l.isMoving(),Sleepz.calculate(2222,2222), 69);
 			}
 			return false;
 		}
-		if(Walking.shouldWalk(6) && Walking.walk(wizardDudeTile)) Sleep.sleep(111,1111);
-		Sleep.sleep(111,111);
+		if(Walking.shouldWalk(6) && Walking.walk(wizardDudeTile)) Sleepz.sleep(111,1111);
+		Sleepz.sleep(111,111);
 		return false;
     }
     public static void cookFish()
@@ -290,27 +288,27 @@ public class Fish_n_Cook extends Leaf {
     		if(ItemProcessing.makeAll("Raw anchovies"))
     		{
     			Main.customPaintText1 = "Make all -> Raw anchovies";
-    			MethodProvider.sleepUntil(() -> !Inventory.contains("Raw anchovies"),
-    					() -> Players.localPlayer().isAnimating(),Sleep.calculate(2222,2222),69);
+    			Sleep.sleepUntil(() -> !Inventory.contains("Raw anchovies"),
+    					() -> p.l.isAnimating(),Sleepz.calculate(2222,2222),69);
     			Main.customPaintText1 = "Make all -> Raw anchovies SleepUntil expired";
     		}
     		else if(ItemProcessing.makeAll("Raw shrimps"))
     		{
     			Main.customPaintText1 = "Make all -> Raw shrimps";
-    			MethodProvider.sleepUntil(() -> !Inventory.contains("Raw shrimps"),
-    					() -> Players.localPlayer().isAnimating(),Sleep.calculate(2222,2222),69);
+    			Sleep.sleepUntil(() -> !Inventory.contains("Raw shrimps"),
+    					() -> p.l.isAnimating(),Sleepz.calculate(2222,2222),69);
     			Main.customPaintText1 = "Make all -> Raw shrimps SleepUntil expired";
     		}
     		return;
     	}
-    	if(!Players.localPlayer().isAnimating() && 
-    			!Players.localPlayer().isMoving()) 
+    	if(!p.l.isAnimating() && 
+    			!p.l.isMoving()) 
     	{
-    		Sleep.sleep(696,1111);
-    		if(Players.localPlayer().isAnimating() || 
-        			Players.localPlayer().isMoving()) 
+    		Sleepz.sleep(696,1111);
+    		if(p.l.isAnimating() || 
+        			p.l.isMoving()) 
         	{
-        		Sleep.sleep(696,1111);
+        		Sleepz.sleep(696,1111);
         		return;
         	}
     	}
@@ -326,8 +324,8 @@ public class Fish_n_Cook extends Leaf {
     			if(Inventory.get("Raw anchovies").useOn(fire))
     			{
         			Main.customPaintText1 = "Use Raw anchovies -> fire";
-    				MethodProvider.sleepUntil(() -> ItemProcessing.isOpen() || !Inventory.contains("Raw anchovies"),
-    						() -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+    				Sleep.sleepUntil(() -> ItemProcessing.isOpen() || !Inventory.contains("Raw anchovies"),
+    						() -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
         			Main.customPaintText1 = "Use Raw anchovies -> fire SleepUntil expired";
     			}
     		} else if(Inventory.contains("Raw shrimps"))
@@ -335,8 +333,8 @@ public class Fish_n_Cook extends Leaf {
     			if(Inventory.get("Raw shrimps").useOn(fire))
     			{
         			Main.customPaintText1 = "Use Raw shrimps -> fire";
-    				MethodProvider.sleepUntil(() -> ItemProcessing.isOpen() || !Inventory.contains("Raw shrimps"),
-    						() -> Players.localPlayer().isMoving(),Sleep.calculate(2222,2222),69);
+    				Sleep.sleepUntil(() -> ItemProcessing.isOpen() || !Inventory.contains("Raw shrimps"),
+    						() -> p.l.isMoving(),Sleepz.calculate(2222,2222),69);
         			Main.customPaintText1 = "Use Raw shrimps -> fire SleepUntil expired";
     			}
     		}
@@ -347,16 +345,16 @@ public class Fish_n_Cook extends Leaf {
     		if(Inventory.get("Logs").useOn("Tinderbox"))
     		{
     			Main.customPaintText1 = "Use logs -> tinderbox";
-    			MethodProvider.sleepUntil(() -> GameObjects.closest(g -> g!=null && 
+    			Sleep.sleepUntil(() -> GameObjects.closest(g -> g!=null && 
     					g.getName().equals("Fire") &&
     					g.getID() == 26185 && 
     					g.distance() < 15 && 
     					g.isOnScreen()) != null,
-    					() -> Players.localPlayer().isAnimating(),
-    					Sleep.calculate(2222,2222),69);
+    					() -> p.l.isAnimating(),
+    					Sleepz.calculate(2222,2222),69);
     			Main.customPaintText1 = "Use logs -> tinderbox SleepUntil expired";
     		}
-    		Sleep.sleep(666,1111);
+    		Sleepz.sleep(666,1111);
     		return;
     	}
     	if(treeArea.getCenter().distance() < 8)
@@ -364,7 +362,7 @@ public class Fish_n_Cook extends Leaf {
     		if(Inventory.isFull())
     		{
     			if(!Inventory.drop("Raw anchovies")) Inventory.drop("Raw shrimps");
-    			Sleep.sleep(666,1111);
+    			Sleepz.sleep(666,1111);
     			return;
     		}
     		GameObject tree = GameObjects.closest(g -> g!=null && g.getName().equals("Tree") && treeArea.contains(g) && 
@@ -374,7 +372,7 @@ public class Fish_n_Cook extends Leaf {
     			if(tree.interact("Chop down"))
     			{
         			Main.customPaintText1 = "Chop down -> tree";
-    				MethodProvider.sleepUntil(() -> Inventory.contains("Logs"),() -> Players.localPlayer().isAnimating() || Players.localPlayer().isMoving(),Sleep.calculate(2222,2222), 69); 
+    				Sleep.sleepUntil(() -> Inventory.contains("Logs"),() -> p.l.isAnimating() || p.l.isMoving(),Sleepz.calculate(2222,2222), 69); 
         			Main.customPaintText1 = "Chop down -> tree SleepUntil expired";               
     			}
     			return;
@@ -384,21 +382,21 @@ public class Fish_n_Cook extends Leaf {
     	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(treeArea.getRandomTile())))
     	{
 			Main.customPaintText1 = "Walk to Tree";
-    		Sleep.sleep(420,696);
+    		Sleepz.sleep(420,696);
     	}
     }
     public static void walkFish()
     {
-    	if(!Players.localPlayer().isAnimating() && 
-    			!Players.localPlayer().isMoving() && 
-    			Players.localPlayer().getInteractingCharacter() == null) 
+    	if(!p.l.isAnimating() && 
+    			!p.l.isMoving() && 
+    			p.l.getInteractingCharacter() == null) 
     	{
-    		Sleep.sleep(696,1111);
-    		if(Players.localPlayer().isAnimating() || 
-        			Players.localPlayer().isMoving() || 
-        			Players.localPlayer().getInteractingCharacter() != null) 
+    		Sleepz.sleep(696,1111);
+    		if(p.l.isAnimating() || 
+        			p.l.isMoving() || 
+        			p.l.getInteractingCharacter() != null) 
         	{
-        		Sleep.sleep(696,1111);
+        		Sleepz.sleep(696,1111);
         		return;
         	}
     	}
@@ -412,9 +410,9 @@ public class Fish_n_Cook extends Leaf {
         			if(fish.interact("Small net"))
         			{
         				Main.customPaintText1 = "Small net -> fishing spot";
-        				MethodProvider.sleepUntil(() -> Dialogues.inDialogue() || Inventory.emptySlotCount() <= 1, 
-        						() -> Players.localPlayer().isAnimating(),
-        						Sleep.calculate(2222,2222),69);
+        				Sleep.sleepUntil(() -> Dialogues.inDialogue() || Inventory.emptySlotCount() <= 1, 
+        						() -> p.l.isAnimating(),
+        						Sleepz.calculate(2222,2222),69);
         				Main.customPaintText1 = "Small net -> fishing spot SleepUntil expired";
         			}
         			return;
@@ -424,7 +422,7 @@ public class Fish_n_Cook extends Leaf {
     	if(Walking.shouldWalk(6) && Walking.walk(Map.getWalkable(fishArea.getRandomTile())))
 		{
     		Main.customPaintText1 = "Walk to fish area";
-			Sleep.sleep(222, 1111);
+			Sleepz.sleep(222, 1111);
 		}
     }
     public static void handleBanking()
@@ -437,30 +435,4 @@ public class Fish_n_Cook extends Leaf {
     		}
     	}
     }
-    /**
-     * returns true if any dialogues can be handled or have been handled
-     * otherwise returns false
-     * @return
-     */
-    public static boolean canHandleDialogues()
-    {
-    	if(Dialogues.isProcessing()) return true;
-    	if(Dialogues.areOptionsAvailable())
-    	{
-    		if(Walking.clickTileOnMinimap(Players.localPlayer().getTile())) 
-    		{
-    			Sleep.sleep(696, 420);
-    		}
-    		return true;
-    	}
-    	if(Dialogues.canContinue())
-		{
-    		int sleep = Sleep.calculate(2222,2222);
-			Keyboard.holdSpace(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
-			MethodProvider.sleepUntil(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
-			return true;
-		}
-    	return false;
-    }
-    
 }

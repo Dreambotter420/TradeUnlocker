@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import script.utilities.API;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 public abstract class Branch extends Leaf
 {
@@ -37,7 +37,7 @@ public abstract class Branch extends Leaf
                     API.currentLeaf = tLeaf.getClass().getSimpleName();
                     return tLeaf.onLoop();
                 }).orElseGet(() -> {
-                    Sleep.sleep(25,25);
+                    Sleepz.sleep(25,25);
                     return 0;
                 });
     }

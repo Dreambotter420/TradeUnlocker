@@ -8,22 +8,24 @@ import java.util.Random;
 import org.dreambot.api.ClientSettings;
 import org.dreambot.api.data.ActionMode;
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.container.impl.bank.BankType;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.filter.Filter;
-import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.settings.PlayerSettings;
 import org.dreambot.api.methods.walking.impl.Walking;
 import org.dreambot.api.methods.widget.Widgets;
 import org.dreambot.api.methods.world.World;
 import org.dreambot.api.methods.world.Worlds;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.Entity;
 import org.dreambot.api.wrappers.items.Item;
 
+import script.p;
 
 
 public class API {
@@ -51,7 +53,39 @@ public static boolean tradeUnlocked = false;
 	public static double sleepMod;
 	public static Timer runTimer;
 	
-
+	 
+    /**
+     * returns true if any dialogues can be handled or have been handled
+     * otherwise returns false
+     * @return
+     */
+    public static boolean canHandleDialogues()
+    {
+    	if(Dialogues.isProcessing()) return true;
+    	if(Dialogues.areOptionsAvailable())
+    	{
+    		if(Dialogues.chooseOption("Sorry, would it be OK if I used your anvils?") || 
+    				Dialogues.chooseOption("Yes.") || 
+    				Dialogues.chooseOption("I wanted to use your anvils."))
+    		{
+    			Sleepz.sleep(420, 696);
+    			return true;
+    		}
+    		if(Walking.clickTileOnMinimap(p.l.getTile())) 
+    		{
+    			Sleepz.sleep(696, 420);
+    		}
+    		return true;
+    	}
+    	if(Dialogues.canContinue())
+		{
+    		int sleep = Sleepz.calculate(2222,2222);
+			Keyboard.holdSpace(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
+			Sleep.sleepUntil(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
+			return true;
+		}
+    	return false;
+    }
 	public static boolean walkOpenBank()
     {
     	if(Bank.isOpen()) return true;
@@ -64,14 +98,14 @@ public static boolean tradeUnlocked = false;
         		{
         			if(bank.interact("Bank"))
         			{
-        				MethodProvider.sleepUntil(() -> Bank.isOpen() || Dialogues.inDialogue(), () -> Players.localPlayer().isMoving(), Sleep.calculate(2222, 2222), 69);
+        				Sleep.sleepUntil(() -> Bank.isOpen() || Dialogues.inDialogue(), () -> p.l.isMoving(), Sleepz.calculate(2222, 2222), 69);
         			}
-        			Sleep.sleep(69, 420);
+        			Sleepz.sleep(69, 420);
         			return false;
         		}
         	}
     	}
-    	if(Walking.shouldWalk(6) && !Bank.open(Bank.getClosestBankLocation())) Sleep.sleep(420, 696);
+    	if(Walking.shouldWalk(6) && !Bank.open(Bank.getClosestBankLocation())) Sleepz.sleep(420, 696);
     	return false;
     }
 public static boolean onlyHaveItems(int... itemIDs)
@@ -99,7 +133,7 @@ public static boolean onlyHaveItems(List<Integer> itemIDs) {
 		}
 		if(i.getName() == null || i.getName().toLowerCase().equals("null"))
 		{
-			MethodProvider.log("Name Null!");
+			Logger.log("Name Null!");
 			continue;
 		}
 		haveException = true;
@@ -131,7 +165,7 @@ public static boolean onlyHaveItemNames(List<String> itemNames) {
 		}
 		if(i.getName() == null || i.getName().toLowerCase().equals("null"))
 		{
-			MethodProvider.log("Name Null!");
+			Logger.log("Name Null!");
 			continue;
 		}
 		haveException = true;
@@ -149,7 +183,7 @@ public static boolean checkedBank()
 		}
 		else
 		{
-			if(!Bank.open(Bank.getClosestBankLocation())) Sleep.sleep(666,666);
+			if(!Bank.open(Bank.getClosestBankLocation())) Sleepz.sleep(666,666);
 		}
 	}
 	if(Bank.getLastBankHistoryCacheTime() > 0)
@@ -234,16 +268,16 @@ public static void randomizeSkillSetpoints() {
         				Widgets.getWidgetChild(134, 23, 2).isVisible())
         		{
         			Widgets.getWidgetChild(134, 23, 2).interact("Select Chat");
-        			MethodProvider.sleepUntil(() -> Widgets.getWidgetChild(134, 23, 2) == null || 
+        			Sleep.sleepUntil(() -> Widgets.getWidgetChild(134, 23, 2) == null || 
         					!Widgets.getWidgetChild(134, 23, 2).isVisible(), 5555);
-            		Sleep.sleep(333,444);
+            		Sleepz.sleep(333,444);
         		}
         		//Enable profanity button toggle is visible
         		if(Widgets.getWidgetChild(134, 19, 1) != null && Widgets.getWidgetChild(134, 19, 1).isVisible())
             	{
         			Widgets.getWidgetChild(134, 19, 1).interact("Toggle");
-        			MethodProvider.sleepUntil(() -> Widgets.getWidgetChild(134,18,4) == null, 5555);
-        			Sleep.sleep(777,333);
+        			Sleep.sleepUntil(() -> Widgets.getWidgetChild(134,18,4) == null, 5555);
+        			Sleepz.sleep(777,333);
                 }
         	} 
         	else
@@ -252,16 +286,16 @@ public static void randomizeSkillSetpoints() {
         		if(Widgets.getWidgetChild(116,75) != null && Widgets.getWidgetChild(116,75).isVisible())
             	{
         			Widgets.getWidgetChild(116,75).interact();
-        			MethodProvider.sleepUntil(() -> Widgets.getWidgetChild(116,75) == null,5555);
-            		Sleep.sleep(333,444);
+        			Sleep.sleepUntil(() -> Widgets.getWidgetChild(116,75) == null,5555);
+            		Sleepz.sleep(333,444);
                 } 
         		else 
             	{
             		if(Widgets.getWidgetChild(548,50) != null && Widgets.getWidgetChild(548,50).isVisible())
                 	{
             			Widgets.getWidgetChild(548,50).interact();
-            			MethodProvider.sleepUntil(() -> Widgets.getWidgetChild(548,50) == null,5555);
-                		Sleep.sleep(333,444);
+            			Sleep.sleepUntil(() -> Widgets.getWidgetChild(548,50) == null,5555);
+                		Sleepz.sleep(333,444);
                     }
             	}
         	}
@@ -277,7 +311,7 @@ public static void randomizeSkillSetpoints() {
     			ClientSettings.isResizableActive() || 
     			ClientSettings.isTradeDelayEnabled())
 		{
-			Sleep.sleep(666, 111);
+			Sleepz.sleep(666, 111);
 			return false;
 		}
 		else
@@ -292,33 +326,33 @@ public static void randomizeSkillSetpoints() {
 		int tmp = API.rand2.nextInt(40000);
 		if(tmp < 2)  
 		{
-			MethodProvider.log("AFK: 0.001% chance, max 240s");
-			Sleep.sleep(50,10000);
+			Logger.log("AFK: 0.001% chance, max 240s");
+			Sleepz.sleep(50,10000);
 		}
 		else if(tmp < 6)  
 		{
-			MethodProvider.log("AFK: 0.003% chance, max 120s");
-			Sleep.sleep(50,5000);
+			Logger.log("AFK: 0.003% chance, max 120s");
+			Sleepz.sleep(50,5000);
 		}
 		else if(tmp < 25)
 		{
-			MethodProvider.log("AFK: 0.095% chance, max 40s");
-			Sleep.sleep(50,3000);
+			Logger.log("AFK: 0.095% chance, max 40s");
+			Sleepz.sleep(50,3000);
 		}
 		else if(tmp < 150)  
 		{
-			MethodProvider.log("AFK: .625% chance, max 20s");
-			Sleep.sleep(50,2000);
+			Logger.log("AFK: .625% chance, max 20s");
+			Sleepz.sleep(50,2000);
 		}
 		else if(tmp < 1000)  
 		{
-			MethodProvider.log("AFK: 4.25% chance, max 6.0s");
-			Sleep.sleep(50,1200);
+			Logger.log("AFK: 4.25% chance, max 6.0s");
+			Sleepz.sleep(50,1200);
 		}
 		else if(tmp < 3000)  
 		{
-			MethodProvider.log("AFK: 10.0% chance, max 3.2");
-			Sleep.sleep(50,600);
+			Logger.log("AFK: 10.0% chance, max 3.2");
+			Sleepz.sleep(50,600);
 		}
 	}
 	

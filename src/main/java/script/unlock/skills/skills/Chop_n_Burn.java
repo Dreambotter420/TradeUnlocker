@@ -1,6 +1,7 @@
 package script.unlock.skills.skills;
 
 import java.util.ArrayList;
+import script.p;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -9,15 +10,12 @@ import java.util.Map.Entry;
 
 import org.dreambot.api.input.Mouse;
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
-import org.dreambot.api.methods.container.impl.bank.BankType;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.input.Keyboard;
 import org.dreambot.api.methods.interactive.GameObjects;
-import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Map;
 import org.dreambot.api.methods.map.Tile;
@@ -26,8 +24,9 @@ import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
 import org.dreambot.api.methods.walking.impl.Walking;
+import org.dreambot.api.utilities.Logger;
+import org.dreambot.api.utilities.Sleep;
 import org.dreambot.api.utilities.Timer;
-import org.dreambot.api.wrappers.interactive.Entity;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
 import org.dreambot.api.wrappers.map.impl.CollisionMap;
@@ -37,7 +36,7 @@ import script.behaviour.DecisionLeaf;
 import script.framework.Leaf;
 import script.utilities.API;
 import script.utilities.Pathz;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 import script.utilities.Walkz;
 
 public class Chop_n_Burn extends Leaf {
@@ -77,24 +76,24 @@ public class Chop_n_Burn extends Leaf {
     {
     	if(API.onlyHaveItemNames("Tinderbox","Bronze axe","Iron axe","Steel axe","Mithril axe","Adamant axe","Rune axe"))
 		{
-			if(endAreaTreeArea2.contains(Players.localPlayer())) return true;
+			if(endAreaTreeArea2.contains(p.l)) return true;
 			if(Walkz.walkPath(Pathz.aroundIceMountainToTrees, true)) return false;
-			if(!treeArea2.contains(Players.localPlayer())) return true;
+			if(!treeArea2.contains(p.l)) return true;
 		}
     	return false;
     }
     @Override
     public int onLoop() {
-    	if(canHandleDialogues())
+    	if(API.canHandleDialogues())
 		{
-    		MethodProvider.log("See dialogue");
-			return Sleep.calculate(69, 69);
+    		Logger.log("See dialogue");
+			return Sleepz.calculate(69, 69);
 		}
     	if(DecisionLeaf.taskTimer.finished())
     	{
     		if(onExit())
     		{
-    			MethodProvider.log("Finished Chop + Burn task!");
+    			Logger.log("Finished Chop + Burn task!");
     			API.unlockMode = null;
     			return 10;
     		}
@@ -103,25 +102,25 @@ public class Chop_n_Burn extends Leaf {
     	if(!announcedTasty)
     	{
     		Keyboard.type("Mmmmmmmm tasty~");
-    		if(treeArea1.contains(Players.localPlayer())) 
+    		if(treeArea1.contains(p.l)) 
     		{
     			treeArea = treeArea1;
-    			MethodProvider.log("Already in tree area 1!");
+    			Logger.log("Already in tree area 1!");
     		}
-    		else if(treeArea2.contains(Players.localPlayer())) 
+    		else if(treeArea2.contains(p.l)) 
     		{
     			treeArea = treeArea2;
-    			MethodProvider.log("Already in tree area 1!");
+    			Logger.log("Already in tree area 1!");
     		}
     		else if(Calculations.random(0,100) > 40) 
     		{
-    			MethodProvider.log("Setting tree area 1");
+    			Logger.log("Setting tree area 1");
     			treeArea = treeArea1;
     		}
     		else 
     		{
     			treeArea = treeArea2;
-    			MethodProvider.log("Setting tree area 2");
+    			Logger.log("Setting tree area 2");
     		}
     		announcedTasty = true;
     	}
@@ -129,49 +128,49 @@ public class Chop_n_Burn extends Leaf {
     	{
     		if(!haveExtraStuff())
     		{
-    			if(treeArea.contains(Players.localPlayer()))
+    			if(treeArea.contains(p.l))
         		{
         			randTreeTile = null;
         			if(startBurning)
             		{
             			burnStuff();
-            			return Sleep.calculate(69,222);
+            			return Sleepz.calculate(69,222);
             		}
             		if(Inventory.isFull())
             		{
             			startBurning = true;
-            			return Sleep.calculate(111,1212);
+            			return Sleepz.calculate(111,1212);
             		}
                 	chopWood();
-                	return Sleep.calculate(222,420);
+                	return Sleepz.calculate(222,420);
         		}
         		//walk to tree area, first walk path around mountain if that is our area
         		
         		if(treeArea == treeArea2)
         		{
-        			if(Walkz.walkPath(Pathz.aroundIceMountainToTrees, false)) return Sleep.calculate(420,1111);
+        			if(Walkz.walkPath(Pathz.aroundIceMountainToTrees, false)) return Sleepz.calculate(420,1111);
         			randTreeTile = Pathz.aroundIceMountainToTrees[0];
         		}
         		if(randTreeTile == null)
         		{
         			randTreeTile = Map.getWalkable(treeArea.getRandomTile());
-        			return Sleep.calculate(111,111);
+        			return Sleepz.calculate(111,111);
         		}
         		
-        		if(Walking.shouldWalk(6) && Walking.walk(randTreeTile)) Sleep.sleep(420,696);
+        		if(Walking.shouldWalk(6) && Walking.walk(randTreeTile)) Sleepz.sleep(420,696);
     		}
     	}
-		return Sleep.calculate(111,111);
+		return Sleepz.calculate(111,111);
     }
     public static void chopWood()
     {
-    	if(!Players.localPlayer().isAnimating()) Sleep.sleep(696,1111);
-    	if(Players.localPlayer().isAnimating()) 
+    	if(!p.l.isAnimating()) Sleepz.sleep(696,1111);
+    	if(p.l.isAnimating()) 
     	{
-			Sleep.sleep(696,1111);
+			Sleepz.sleep(696,1111);
     		return;
     	}
-    	MethodProvider.log("Beginning find / sort of trees");
+    	Logger.log("Beginning find / sort of trees");
     	Timer test = new Timer(10000);
     	List<GameObject> validTrees = GameObjects.all(g -> g!=null && treeArea.contains(g) && g.hasAction("Chop down") && 
     			g.distance() < 15 &&
@@ -180,7 +179,7 @@ public class Chop_n_Burn extends Leaf {
     	if(validTrees == null || validTrees.isEmpty()) return;
     	//time to go through all trees, find closest (walking dist) stand tile for each one, sort the list, and go chop the nearest tree
     	LinkedHashMap<GameObject,ObjectTile> treesNTiles = new LinkedHashMap<GameObject,ObjectTile>();
-    	final Tile loc = Players.localPlayer().getTile();
+    	final Tile loc = p.l.getTile();
     	for(GameObject tree : validTrees)
     	{
     		if(tree == null || !tree.exists()) continue;
@@ -213,23 +212,23 @@ public class Chop_n_Burn extends Leaf {
                 });
     	GameObject closestTree = treesNTilesListOfMapEntries.get(0).getKey();
     	Tile closestTreeTile = treesNTilesListOfMapEntries.get(0).getValue().getTile();
-    	MethodProvider.log("Done sorting in "+test.elapsed()+"ms! Closest tree / walkable tile: " + closestTree.getTile().toString()+" / "+closestTreeTile.toString());
+    	Logger.log("Done sorting in "+test.elapsed()+"ms! Closest tree / walkable tile: " + closestTree.getTile().toString()+" / "+closestTreeTile.toString());
     	if(closestTree.isOnScreen())
     	{
     		if(closestTree.interact("Chop down"))
     		{
     			String name = closestTree.getName();
     			Main.customPaintText1 = "Chop down -> "+name;
-    			MethodProvider.sleepUntil(() -> Dialogues.inDialogue() || closestTree == null || !closestTree.exists(), 
-    					() -> Players.localPlayer().isAnimating() || Players.localPlayer().isMoving(),
-    					Sleep.calculate(2222,2222),69);
+    			Sleep.sleepUntil(() -> Dialogues.inDialogue() || closestTree == null || !closestTree.exists(), 
+    					() -> p.l.isAnimating() || p.l.isMoving(),
+    					Sleepz.calculate(2222,2222),69);
     			Main.customPaintText1 = "Chop down -> "+name+" SleepUntil expired";
     		}
     		return;
     	}
     	if(Walking.shouldWalk() && Walking.walk(closestTreeTile))
     	{
-    		MethodProvider.sleepUntil(() -> closestTree.isOnScreen(), Sleep.calculate(1111,1111));
+    		Sleep.sleepUntil(() -> closestTree.isOnScreen(), Sleepz.calculate(1111,1111));
     	}
     }
     public static boolean haveExtraStuff()
@@ -237,9 +236,15 @@ public class Chop_n_Burn extends Leaf {
     	if(API.onlyHaveItemNames("Tinderbox","Bronze axe","Iron axe","Steel axe","Mithril axe","Adamant axe","Rune axe"))
 		{
 			startBurning = false;
-			Sleep.sleep(111,1212);
+			Sleepz.sleep(111,1212);
     		return false;
 		}
+    	if(Inventory.contains("Ashes"))
+    	{
+    		Inventory.dropAll("Ashes");
+    		Sleepz.sleep(111,696);
+    		return true;
+    	}
     	if(!API.onlyHaveItemNames("Tinderbox","Bronze axe","Iron axe","Steel axe","Mithril axe","Adamant axe","Rune axe",
     			"Oak logs","Logs"))
     	{
@@ -249,12 +254,12 @@ public class Chop_n_Burn extends Leaf {
     			if(Bank.depositAllExcept("Tinderbox","Bronze axe","Iron axe","Steel axe","Mithril axe","Adamant axe","Rune axe",
     					"Oak logs","Logs"))
     			{
-    				MethodProvider.log("Deposited all items except woodcutting supplies!");
+    				Logger.log("Deposited all items except woodcutting supplies!");
     				Main.customPaintText1 = "Deposited all items except woodcutting supplies!";
     				Bank.close();
     			}
     		}
-    		Sleep.sleep(420,696);
+    		Sleepz.sleep(420,696);
     		return true;
     	}
     	return false;
@@ -268,17 +273,17 @@ public class Chop_n_Burn extends Leaf {
 			Tabs.open(Tab.INVENTORY);
 			return;
 		}
-		if(!Players.localPlayer().isAnimating() && 
-    			!Players.localPlayer().isMoving()) Sleep.sleep(222,425);
-		if(Players.localPlayer().isAnimating() || 
-    			Players.localPlayer().isMoving()) 
+		if(!p.l.isAnimating() && 
+    			!p.l.isMoving()) Sleepz.sleep(222,425);
+		if(p.l.isAnimating() || 
+    			p.l.isMoving()) 
     	{
-			Sleep.sleep(222,425);
+			Sleepz.sleep(222,425);
     		return;
     	}
 		//can start a fire here or walk
 		Filter<GameObject> blockedBelowFilter = g -> g!=null &&
-				g.getTile().equals(Players.localPlayer().getTile()) &&
+				g.getTile().equals(p.l.getTile()) &&
 				(g.getName().equals("Fern") || 
 						g.getName().equals("Fire") || 
 						g.getName().equals("Daisies") ||
@@ -303,10 +308,10 @@ public class Chop_n_Burn extends Leaf {
 		if(Skills.getRealLevel(Skill.FIREMAKING) >= 15 && Inventory.contains("Oak logs")) logs = Inventory.get("Oak logs");
 		if(tinderbox == null || logs == null)
 		{
-			MethodProvider.log("Tinderbox or logs null in firemaking function!");
+			Logger.log("Tinderbox or logs null in firemaking function!");
 			return;
 		}
-		final Tile burnTile = Players.localPlayer().getTile();
+		final Tile burnTile = p.l.getTile();
 		final String logName = logs.getName();
 		Filter<Item> logFilter = l -> l != null && l.getName().equals(logName);
 		double leastDist = -1;
@@ -335,7 +340,7 @@ public class Chop_n_Burn extends Leaf {
 			if(logs.useOn(tinderbox))
 			{
 				Main.customPaintText1 = "Use logs -> tinderbox";
-				MethodProvider.sleepUntil(() -> !Players.localPlayer().getTile().equals(burnTile), () -> Players.localPlayer().isAnimating(),Sleep.calculate(2222, 2222),69);
+				Sleep.sleepUntil(() -> !p.l.getTile().equals(burnTile), () -> p.l.isAnimating(),Sleepz.calculate(2222, 2222),69);
 				Main.customPaintText1 = "Use logs -> tinderbox SleepUntil expired";
 			}
 		}
@@ -344,11 +349,11 @@ public class Chop_n_Burn extends Leaf {
 			if(tinderbox.useOn(logs))
 			{
 				Main.customPaintText1 = "Use tinderbox -> logs";
-				MethodProvider.sleepUntil(() -> !Players.localPlayer().getTile().equals(burnTile), () -> Players.localPlayer().isAnimating(),Sleep.calculate(2222, 2222),69);
+				Sleep.sleepUntil(() -> !p.l.getTile().equals(burnTile), () -> p.l.isAnimating(),Sleepz.calculate(2222, 2222),69);
 				Main.customPaintText1 = "Use tinderbox -> logs SleepUntil expired";
 			}
 		}
-		Sleep.sleep(69, 222);
+		Sleepz.sleep(69, 222);
 		return;
     }
     public static void walkToAnotherBurnTile()
@@ -356,14 +361,14 @@ public class Chop_n_Burn extends Leaf {
     	int radius = Calculations.random(1,7);
     	if(radius != 5) radius = (int) ((double) radius / 2);
     	if(radius < 1) radius = 1;
-    	Area searchArea = Players.localPlayer().getTile().getArea(radius);
+    	Area searchArea = p.l.getTile().getArea(radius);
     	List<Tile> validTiles = new ArrayList<Tile>();
     	for(Tile t : searchArea.getTiles())
     	{
     		//check for both walking blockages and fire-starting blockages then add valid tiles to list, shuffle list
     		if(t == null ||
     				CollisionMap.isBlocked(Map.getFlag(t)) ||
-    				Players.localPlayer().getTile().equals(t) ||
+    				p.l.getTile().equals(t) ||
     				!treeArea.contains(t) ||
     				GameObjects.closest(g -> g!=null &&
     				g.getTile().equals(t) &&
@@ -379,7 +384,7 @@ public class Chop_n_Burn extends Leaf {
     	}
     	if(validTiles.isEmpty()) 
     	{
-    		MethodProvider.log("Fire-startable tiles in radius "+radius+" around us not found! Searching again...");
+    		Logger.log("Fire-startable tiles in radius "+radius+" around us not found! Searching again...");
     		return;
     	}
     	Collections.shuffle(validTiles);
@@ -387,41 +392,17 @@ public class Chop_n_Burn extends Leaf {
     	{
     		if(Walking.walkOnScreen(validTiles.get(0)))
     		{
-    			MethodProvider.sleepUntil(() -> Players.localPlayer().getTile().equals(validTiles.get(0)), 
-        				() -> Players.localPlayer().isMoving(),Sleep.calculate(2222, 2222),69);
+    			Sleep.sleepUntil(() -> p.l.getTile().equals(validTiles.get(0)), 
+        				() -> p.l.isMoving(),Sleepz.calculate(2222, 2222),69);
     		}
     		return;
     	}
     	if(Walking.walk(validTiles.get(0)))
     	{
-    		MethodProvider.sleepUntil(() -> Players.localPlayer().getTile().equals(validTiles.get(0)), 
-    				() -> Players.localPlayer().isMoving(),Sleep.calculate(2222, 2222),69);
+    		Sleep.sleepUntil(() -> p.l.getTile().equals(validTiles.get(0)), 
+    				() -> p.l.isMoving(),Sleepz.calculate(2222, 2222),69);
     	}
     }
-    /**
-     * returns true if any dialogues can be handled or have been handled
-     * otherwise returns false
-     * @return
-     */
-    public static boolean canHandleDialogues()
-    {
-    	if(Dialogues.isProcessing()) return true;
-    	if(Dialogues.areOptionsAvailable())
-    	{
-    		if(Walking.clickTileOnMinimap(Players.localPlayer().getTile())) 
-    		{
-    			Sleep.sleep(696, 420);
-    		}
-    		return true;
-    	}
-    	if(Dialogues.canContinue())
-		{
-    		int sleep = Sleep.calculate(2222,2222);
-			Keyboard.holdSpace(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
-			MethodProvider.sleepUntil(() -> !Dialogues.inDialogue() || Dialogues.areOptionsAvailable(), sleep);
-			return true;
-		}
-    	return false;
-    }
+    
     
 }

@@ -5,12 +5,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.skills.Skills;
+import org.dreambot.api.utilities.Logger;
 import org.dreambot.api.utilities.Timer;
 
+import script.p;
 import script.framework.Leaf;
+import script.unlock.idle.Idle;
 import script.utilities.API;
 import script.utilities.API.modes;
 
@@ -37,7 +39,7 @@ public class DecisionLeaf extends Leaf{
     	{
     		int timer = (int)Calculations.nextGaussianRandom(12000000, 1200000);
     		taskTimer = new Timer(timer);
-    		MethodProvider.log("Set timer for: " + ((double)timer / 60000) +" minutes");
+    		Logger.log("Set timer for: " + ((double)timer / 60000) +" minutes");
     		break;
     	}
     	case(3):
@@ -48,7 +50,7 @@ public class DecisionLeaf extends Leaf{
     		else if (rand < 38) timer = (int)Calculations.nextGaussianRandom(3000000, 800000);
     		else timer = (int)Calculations.nextGaussianRandom(6000000, 1200000);
     		taskTimer = new Timer(timer);
-    		MethodProvider.log("Set timer for: " + ((double)timer / 60000) +" minutes");
+    		Logger.log("Set timer for: " + ((double)timer / 60000) +" minutes");
     		break;
     	}
     	case(2):
@@ -59,7 +61,7 @@ public class DecisionLeaf extends Leaf{
     		else if (rand < 38) timer = (int)Calculations.nextGaussianRandom(1200000, 800000);
     		else timer = (int)Calculations.nextGaussianRandom(3000000, 1200000);
     		taskTimer = new Timer(timer);
-    		MethodProvider.log("Set timer for: " + ((double)timer / 60000) +" minutes");
+    		Logger.log("Set timer for: " + ((double)timer / 60000) +" minutes");
     		break;
     	}
     	case(1):
@@ -70,32 +72,33 @@ public class DecisionLeaf extends Leaf{
     		else if (rand < 38) timer = (int)Calculations.nextGaussianRandom(3000000, 800000);
     		else timer = (int)Calculations.nextGaussianRandom(1200000, 1200000);
     		taskTimer = new Timer(timer);
-    		MethodProvider.log("Set timer for: " + ((double)timer / 60000) +" minutes");
+    		Logger.log("Set timer for: " + ((double)timer / 60000) +" minutes");
     		break;
     	}
     	default:{
-    		MethodProvider.log("Whoops - enter 1,2,3 into setTaskTimer function! :-)");
+    		Logger.log("Whoops - enter 1,2,3 into setTaskTimer function! :-)");
     		break;
     	}}
     }
     
 	@Override
 	public int onLoop() {
-		if(Skills.getTotalLevel() >= 100) API.unlockMode = API.modes.IDLE;
+		if(!Idle.doneIdling) API.unlockMode = API.modes.IDLE;
+		else if(Skills.getTotalLevel() >= 100) API.unlockMode = API.modes.QUEST;
 		else
 		{
 			modes[] validModez = {modes.CHOP,modes.MINE,modes.TRAIN_COMBAT};
 			List<modes> validModes = Arrays.asList(validModez);
-			if(Players.localPlayer().getLevel() <= 14)
+			if(p.l.getLevel() <= 14)
 			{
-				MethodProvider.log("Not adding fish mode due to cb lvl <= 14! Wizards gon fuck witcha!");
+				Logger.log("Not adding fish mode due to cb lvl <= 14! Wizards gon fuck witcha!");
 			} else validModes.add(modes.FISH);
 			Collections.shuffle(validModes);
 			API.unlockMode = validModes.get(0);
 		}
-		MethodProvider.log("Switching mode: " + API.unlockMode.toString());
+		Logger.log("Switching mode: " + API.unlockMode.toString());
 		if(API.unlockMode == modes.MINE) setTaskTimer(3);
 		else setTaskTimer(2);
-		return 10;
+		return 100;
 	}
 }

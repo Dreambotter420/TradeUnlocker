@@ -1,15 +1,15 @@
 package script.unlock.skills.melee;
 
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.combat.Combat;
 import org.dreambot.api.methods.combat.CombatStyle;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
+import org.dreambot.api.utilities.Sleep;
 
 import script.framework.Leaf;
 import script.utilities.API;
-import script.utilities.Sleep;
+import script.utilities.Sleepz;
 
 public class HandleAttackStyles  extends Leaf {
 	public static boolean trainStr = false;
@@ -95,8 +95,8 @@ public class HandleAttackStyles  extends Leaf {
     	if(trainStr) Combat.setCombatStyle(CombatStyle.STRENGTH);
     	else if(trainAtt) Combat.setCombatStyle(CombatStyle.ATTACK);
     	else if(trainDef) Combat.setCombatStyle(CombatStyle.DEFENCE);
-    	MethodProvider.sleep((int)Calculations.nextGaussianRandom(666,111));
-		return Sleep.calculate(111,1111);
+    	Sleep.sleep((int)Calculations.nextGaussianRandom(666,111));
+		return Sleepz.calculate(111,1111);
     }
 }
 
